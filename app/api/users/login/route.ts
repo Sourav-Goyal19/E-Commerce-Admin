@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import UserModel from "@/models/user.model";
+import UserModel, { User } from "@/models/user.model";
 import { Connect } from "@/dbConfig/connect";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const reqBody = await request.json();
     const { email, password } = reqBody;
 
-    const user = await UserModel.findOne({ email });
+    const user: User | null = await UserModel.findOne({ email });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -19,7 +19,14 @@ export async function POST(request: NextRequest) {
 
     console.log(user);
 
-    const isMatch = await bcryptjs.compare(password, user.hashedPassword);
+    if (user.type == "oauth") {
+      return NextResponse.json(
+        { message: "User Registered With Other Service" },
+        { status: 401 }
+      );
+    }
+
+    const isMatch = await bcryptjs.compare(password, user.hashedPassword!);
 
     if (!isMatch) {
       return NextResponse.json(

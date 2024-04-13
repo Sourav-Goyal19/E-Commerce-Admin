@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,15 +18,49 @@ import { BsGithub, BsGoogle } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import ThemeButton from "@/components/ui/themeButton";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { setUser } from "@/redux/features/userSlice";
 
 type Variant = "LOGIN" | "REGISTER";
 
 export default function AuthForm() {
-  axios.defaults.withCredentials = true;
+  const session = useSession();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user.user);
   const router = useRouter();
   const [variant, setVariant] = useState<Variant>("LOGIN");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    console.log(session.status);
+    if (session.status === "authenticated" && session.data.user) {
+      axios
+        .get(`/api/users/getuser/${session.data.user.email}`)
+        .then((res) => {
+          dispatch(setUser(res.data.user));
+          router.push("/me");
+        })
+        .catch((err) => {
+          toast.error("Something went wrong");
+          console.log(err);
+        });
+    }
+  }, [session.status]);
+
+  useEffect(() => {
+    axios
+      .get("/api/users/me")
+      .then((res) => {
+        console.log(res);
+        dispatch(setUser(res.data.user));
+        router.push("/me");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const formSchema =
     variant === "LOGIN"
@@ -97,6 +131,7 @@ export default function AuthForm() {
             return router.push("/verifyemail");
           }
           toast.success("Login Successful");
+          dispatch(setUser(res.data.user));
           router.push("/me");
         })
         .catch((err) => {
@@ -118,6 +153,9 @@ export default function AuthForm() {
             <Button
               className="py-1 w-full border shadow flex items-center justify-center gap-1 text-sm"
               disabled={isLoading}
+              onClick={() => {
+                signIn("google");
+              }}
             >
               <BsGoogle />
               <span>Google</span>
@@ -125,6 +163,9 @@ export default function AuthForm() {
             <Button
               className="py-1 w-full border shadow flex items-center justify-center gap-1 text-sm"
               disabled={isLoading}
+              onClick={() => {
+                signOut();
+              }}
             >
               <BsGithub />
               <span>Github</span>

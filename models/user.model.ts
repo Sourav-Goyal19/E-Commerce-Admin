@@ -4,14 +4,33 @@ import mongoose, { Schema, model } from "mongoose";
 export interface User extends Document {
   username: string;
   email: string;
-  hashedPassword: string;
-  salt: string;
+  hashedPassword?: string;
+  salt?: string;
+  image?: string;
   isAdmin: boolean;
-  isVerified: boolean;
-  verifyToken: string | undefined;
-  verifyTokenExpiry: Date | undefined;
-  forgotPasswordToken: string | undefined;
-  forgotPasswordTokenExpiry: Date | undefined;
+  isVerified?: boolean;
+  provider?: string;
+  type?: string;
+  verifyToken?: string | undefined;
+  verifyTokenExpiry?: Date | undefined;
+  forgotPasswordToken?: string | undefined;
+  forgotPasswordTokenExpiry?: Date | undefined;
+}
+
+export interface UserData {
+  username: string;
+  email: string;
+  hashedPassword?: string;
+  salt?: string;
+  image?: string;
+  isAdmin?: boolean;
+  isVerified?: boolean;
+  provider?: string;
+  type?: string;
+  verifyToken?: string | undefined;
+  verifyTokenExpiry?: Date | undefined;
+  forgotPasswordToken?: string | undefined;
+  forgotPasswordTokenExpiry?: Date | undefined;
 }
 
 const userSchema: Schema<User> = new Schema({
@@ -31,6 +50,9 @@ const userSchema: Schema<User> = new Schema({
   salt: {
     type: String,
   },
+  image: {
+    type: String,
+  },
   isAdmin: {
     type: Boolean,
     default: false,
@@ -38,6 +60,13 @@ const userSchema: Schema<User> = new Schema({
   isVerified: {
     type: Boolean,
     default: false,
+  },
+  provider: {
+    type: String,
+    default: "email",
+  },
+  type: {
+    type: String,
   },
   verifyToken: {
     type: String,

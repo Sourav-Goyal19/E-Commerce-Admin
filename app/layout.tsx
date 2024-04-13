@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import NextAuthProvider from "./Providers";
+import { ReduxProvider } from "@/redux/Provider";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,18 +19,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  axios.defaults.withCredentials = true;
   return (
-    <html lang="en" className="">
+    <html lang="en" className="dark">
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-        <Toaster />
+        <NextAuthProvider>
+          <ReduxProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              {children}
+            </ThemeProvider>
+            <Toaster />
+          </ReduxProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );
