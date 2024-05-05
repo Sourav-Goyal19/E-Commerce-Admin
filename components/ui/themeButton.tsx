@@ -23,6 +23,7 @@ const ThemeButton = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   return (
     <div className="relative" ref={dropdownRef}>
       <Button size="icon" variant={"outline"} onClick={() => setDropdown(true)}>

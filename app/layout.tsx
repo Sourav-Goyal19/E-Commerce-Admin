@@ -4,7 +4,7 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import NextAuthProvider from "./Providers";
-import { ReduxProvider } from "@/redux/Provider";
+// import { ReduxProvider } from "@/redux/Provider";
 import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,15 +21,15 @@ export default function RootLayout({
 }>) {
   axios.defaults.withCredentials = true;
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="">
       <body className={inter.className}>
         <NextAuthProvider>
-          <ReduxProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              {children}
-            </ThemeProvider>
-            <Toaster />
-          </ReduxProvider>
+          {/* <ReduxProvider> */}
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+          </ThemeProvider>
+          <Toaster />
+          {/* </ReduxProvider> */}
         </NextAuthProvider>
       </body>
     </html>

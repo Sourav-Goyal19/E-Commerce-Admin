@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     if (!isMatch) {
       return NextResponse.json(
-        { message: "Invalid password" },
+        { message: "Incorrect password" },
         { status: 401 }
       );
     }
@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
 
     response.cookies.set("token", token, {
       httpOnly: true,
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
 
     return response;

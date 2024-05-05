@@ -19,32 +19,34 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { setUser } from "@/redux/features/userSlice";
+import { useUser } from "@/zustand/store";
+import LoadingModal from "@/components/ui/LoadingModal";
 
 type Variant = "LOGIN" | "REGISTER";
 
 export default function AuthForm() {
   const session = useSession();
-  const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user.user);
+  const { user, setUser } = useUser();
   const router = useRouter();
   const [variant, setVariant] = useState<Variant>("LOGIN");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
 
   useEffect(() => {
     console.log(session.status);
     if (session.status === "authenticated" && session.data.user) {
+      setIsPageLoading(true);
       axios
         .get(`/api/users/getuser/${session.data.user.email}`)
         .then((res) => {
-          dispatch(setUser(res.data.user));
-          router.push("/me");
+          setUser(res.data.user);
         })
         .catch((err) => {
           toast.error("Something went wrong");
           console.log(err);
+        })
+        .finally(() => {
+          setIsPageLoading(false);
         });
     }
   }, [session.status]);
@@ -54,13 +56,16 @@ export default function AuthForm() {
       .get("/api/users/me")
       .then((res) => {
         console.log(res);
-        dispatch(setUser(res.data.user));
-        router.push("/me");
+        setUser(res.data.user);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    if (user != null) router.push("/me");
+  }, [user]);
 
   const formSchema =
     variant === "LOGIN"
@@ -131,11 +136,15 @@ export default function AuthForm() {
             return router.push("/verifyemail");
           }
           toast.success("Login Successful");
-          dispatch(setUser(res.data.user));
-          router.push("/me");
+          setIsPageLoading(true);
+          setUser(res.data.user);
         })
         .catch((err) => {
-          toast.error(err.response.data.message);
+          if (err.response.data.message.includes("password")) {
+            form.setError("password", { message: "Incorrect Password" });
+          } else {
+            toast.error(err.response.data.message);
+          }
           console.log(err);
         })
         .finally(() => setIsLoading(false));
@@ -143,64 +152,88 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="p-4 flex flex-col items-center justify-center h-full">
-      <div className="flex flex-col items-center justify-center w-full max-w-lg py-8 px-4 rounded-md shadow-md border">
-        <h1 className="text-2xl sm:text-3xl text-center font-bold mb-2 text-foreground">
-          Sign Into Your Account
-        </h1>
-        <div className="max-w-md w-full">
-          <div className="flex gap-3 w-full my-2">
-            <Button
-              className="py-1 w-full border shadow flex items-center justify-center gap-1 text-sm"
-              disabled={isLoading}
-              onClick={() => {
-                signIn("google");
-              }}
-            >
-              <BsGoogle />
-              <span>Google</span>
-            </Button>
-            <Button
-              className="py-1 w-full border shadow flex items-center justify-center gap-1 text-sm"
-              disabled={isLoading}
-              onClick={() => {
-                signOut();
-              }}
-            >
-              <BsGithub />
-              <span>Github</span>
-            </Button>
-          </div>
+    <>
+      {isPageLoading && <LoadingModal />}
+      <div className="p-4 flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center w-full max-w-lg py-8 px-4 rounded-md shadow-md border">
+          <h1 className="text-2xl sm:text-3xl text-center font-bold mb-2 text-foreground">
+            Sign Into Your Account
+          </h1>
+          <div className="max-w-md w-full">
+            <div className="flex gap-3 w-full my-2">
+              <Button
+                className="py-1 w-full border shadow flex items-center justify-center gap-1 text-sm"
+                disabled={isLoading}
+                onClick={() => {
+                  signIn("google");
+                }}
+              >
+                <BsGoogle />
+                <span>Google</span>
+              </Button>
+              <Button
+                className="py-1 w-full border shadow flex items-center justify-center gap-1 text-sm"
+                disabled={isLoading}
+                onClick={() => {
+                  signIn("github");
+                }}
+              >
+                <BsGithub />
+                <span>Github</span>
+              </Button>
+            </div>
 
-          <div className="mt-6 w-full ">
-            <div className="relative w-full">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-background">Or Contiue With</span>
+            <div className="mt-6 w-full ">
+              <div className="relative w-full">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-background">Or Contiue With</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className=" w-full flex flex-col gap-4 mt-3"
-            >
-              {variant == "REGISTER" ? (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className=" w-full flex flex-col gap-4 mt-3"
+              >
+                {variant == "REGISTER" ? (
+                  <FormField
+                    control={form.control}
+                    //@ts-ignore
+                    name="username"
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              disabled={isLoading}
+                              placeholder="Name"
+                              type="text"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ) : null}
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="email"
                   render={({ field }) => {
                     return (
                       <FormItem>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel>Email</FormLabel>
                         <FormControl>
                           <Input
                             disabled={isLoading}
-                            placeholder="Name"
-                            type="text"
+                            placeholder="Email Address"
+                            type="email"
                             {...field}
                           />
                         </FormControl>
@@ -209,68 +242,48 @@ export default function AuthForm() {
                     );
                   }}
                 />
-              ) : null}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={isLoading}
-                          placeholder="Email Address"
-                          type="email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={isLoading}
-                          placeholder="Password"
-                          type="password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-              <p className="text-right">
-                <Link href="/forgotpassword" className="underline italic">
-                  forgot password?
-                </Link>
-              </p>
-              <Button type="submit" disabled={isLoading} className="w-full">
-                Submit
-              </Button>
-            </form>
-          </Form>
-          <div className="mt-6 text-center">
-            {variant === "LOGIN" ? "New Here?" : "Already Have An Account?"}
-            <span
-              onClick={toggleVariant}
-              className="underline cursor-pointer ml-1"
-            >
-              {variant === "LOGIN" ? "Create An Account" : "Login Here"}
-            </span>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={isLoading}
+                            placeholder="Password"
+                            type="password"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <p className="text-right">
+                  <Link href="/forgotpassword" className="underline italic">
+                    forgot password?
+                  </Link>
+                </p>
+                <Button type="submit" disabled={isLoading} className="w-full">
+                  Submit
+                </Button>
+              </form>
+            </Form>
+            <div className="mt-6 text-center">
+              {variant === "LOGIN" ? "New Here?" : "Already Have An Account?"}
+              <span
+                onClick={toggleVariant}
+                className="underline cursor-pointer ml-1"
+              >
+                {variant === "LOGIN" ? "Create An Account" : "Login Here"}
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

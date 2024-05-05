@@ -22,7 +22,7 @@ export async function GET(
   }
   return NextResponse.json(
     {
-      message: "Login successful",
+      message: "User Found Successfully",
       success: true,
       user,
     },
