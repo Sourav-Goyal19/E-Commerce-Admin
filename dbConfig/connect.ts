@@ -27,7 +27,6 @@ export async function Connect(): Promise<void> {
       connectionObj.isConnected = false;
       console.log(error);
       process.exit(1);
-      return;
     });
   } catch (error) {
     console.log("Something Went Wrong in connecting to db");

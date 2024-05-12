@@ -60,7 +60,11 @@ const ForgotPassword = () => {
                 return (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="Email" type="email" {...field} />
+                      <Input
+                        placeholder="Enter Your Email"
+                        type="email"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

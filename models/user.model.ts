@@ -18,6 +18,7 @@ export interface User extends Document {
 }
 
 export interface UserData {
+  _id: string;
   username: string;
   email: string;
   hashedPassword?: string;

@@ -12,19 +12,19 @@ export function middleware(request: NextRequest) {
     pathname == "/forgotpassword";
 
   const token = request.cookies.get("token");
-  const nextAuthToken = request.cookies.get("next-auth.csrf-token");
+  const nextAuthToken = request.cookies.get("next-auth.session-token");
 
-  // if (isPublicPath && token) {
-  //   return NextResponse.redirect(new URL("/me", request.url));
-  // }
+  if (isPublicPath && token) {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
 
-  // if (isPublicPath && nextAuthToken) {
-  //   return NextResponse.redirect(new URL("/me", request.url));
-  // }
+  if (isPublicPath && nextAuthToken) {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
 
-  // if (!isPublicPath && !token) {
-  //   return NextResponse.redirect(new URL("/", request.url));
-  // }
+  if (!isPublicPath && !token && !nextAuthToken) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
 }
 
 export const config = {

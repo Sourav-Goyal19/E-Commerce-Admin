@@ -64,7 +64,7 @@ export default function AuthForm() {
   }, []);
 
   useEffect(() => {
-    if (user != null) router.push("/me");
+    if (user != null) router.push("/home");
   }, [user]);
 
   const formSchema =

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Connect } from "@/dbConfig/connect";
-import UserModel from "@/models/user.model";
+import UserModel, { UserData } from "@/models/user.model";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 
 Connect();
@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   try {
     const userId = await getDataFromToken(req);
     // console.log(userId);
-    const user = await UserModel.findById(userId)
+    const user: UserData = await UserModel.findById(userId)
       .select("-hashedPassword")
       .select("-salt")
       .select("-__v");
