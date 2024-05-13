@@ -28,5 +28,11 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/me", "/verifyemail", "/forgotpassword"],
+  matcher: [
+    "/",
+    "/me",
+    "/verifyemail",
+    "/forgotpassword",
+    "/(dashboard)/[storeId]",
+  ],
 };

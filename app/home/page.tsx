@@ -1,14 +1,18 @@
 "use client";
 import { useUser } from "@/zustand/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useStoreModal } from "@/hooks/useStore";
+import { useRouter } from "next/navigation";
+import LoadingModal from "@/components/ui/LoadingModal";
 
 const Home = () => {
   const session = useSession();
-  const { isOpen, onOpen, onClose } = useStoreModal();
   const { user, setUser } = useUser();
+  const { isOpen, onOpen } = useStoreModal();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     console.log(session.status);
@@ -25,6 +29,7 @@ const Home = () => {
   }, [session.status]);
 
   useEffect(() => {
+    if (user?._id) return;
     axios
       .get("/api/users/me")
       .then((res) => {
@@ -42,7 +47,26 @@ const Home = () => {
     }
   }, [isOpen, onOpen]);
 
-  return <div className="p-4">Root Page</div>;
+  useEffect(() => {
+    const fetchStore = async () => {
+      if (user?._id) {
+        axios
+          .get(`/api/store/${user?._id}`)
+          .then((res) => {
+            setIsLoading(true);
+            console.log(res.data.store);
+            router.push(`/${res.data.store._id}`);
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            console.log(err.message);
+          });
+      }
+    };
+    fetchStore();
+  }, [user]);
+
+  return <>{isLoading && <LoadingModal />}</>;
 };
 
 export default Home;

@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { useUser } from "@/zustand/store";
+import toast from "react-hot-toast";
 
 const StoreModal = () => {
   const { isOpen, onOpen, onClose } = useStoreModal();
@@ -47,9 +48,11 @@ const StoreModal = () => {
       })
       .then((res) => {
         console.log(res.data);
+        window.location.assign(`/${res.data?.store?._id}`);
       })
       .catch((err) => {
         console.log(err);
+        toast.error(err.message);
       })
       .finally(() => {
         setIsLoading(false);
