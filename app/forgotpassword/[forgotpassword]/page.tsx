@@ -95,7 +95,7 @@ const ResetPassword = ({ params }: { params: IParams }) => {
   }, []);
 
   return (
-    <div className="h-screen flex justify-center items-center p-4">
+    <div className="h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-950">
       <>
         {pageLoading ? (
           <div className="h-10 w-10 border-2 border-foreground rounded-full border-b-transparent animate-spin"></div>
@@ -117,8 +117,10 @@ const ResetPassword = ({ params }: { params: IParams }) => {
                     </p>
                   </div>
                 ) : (
-                  <div className="max-w-lg w-full p-4 border shadow-sm">
-                    <p className="text-3xl font-bold">Reset Your Password</p>
+                  <div className="max-w-lg w-full p-5 border shadow-md bg-background rounded-lg">
+                    <p className="text-2xl text-center font-bold">
+                      Reset Your Password
+                    </p>
                     <Form {...form}>
                       <form
                         onSubmit={form.handleSubmit(onSubmit)}

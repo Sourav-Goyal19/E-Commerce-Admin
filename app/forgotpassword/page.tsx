@@ -48,8 +48,8 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center p-4">
-      <div className="max-w-md shadow w-full border rounded p-4">
+    <div className="h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-950">
+      <div className="max-w-md shadow-md w-full border rounded-lg bg-background p-4">
         <h1 className="text-2xl font-bold text-center">Reset Password</h1>
         <Form {...form}>
           <form className="my-5" onSubmit={form.handleSubmit(onSubmit)}>

@@ -6,6 +6,7 @@ export interface Store extends Document {
   userId: Schema.Types.ObjectId;
 }
 export interface StoreData {
+  _id: string;
   name: string;
   userId: Schema.Types.ObjectId;
 }

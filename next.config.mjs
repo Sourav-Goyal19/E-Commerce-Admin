@@ -7,6 +7,7 @@ const nextConfig = {
       "i.ytimg.com",
       "images.unsplash.com",
       "cdn.discordapp.com",
+      "res.cloudinary.com",
     ],
   },
 };

@@ -1,3 +1,5 @@
+import ModalProvider from "@/components/modals/modalProvider";
+import Navbar from "@/components/navbar";
 import { StoreModel } from "@/models/store.modal";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -17,7 +19,8 @@ const DashboardLayout = async ({
 
   return (
     <div>
-      <p>{store.name}</p>
+      <ModalProvider />
+      <Navbar />
       {children}
     </div>
   );

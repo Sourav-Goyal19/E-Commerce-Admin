@@ -154,8 +154,8 @@ export default function AuthForm() {
   return (
     <>
       {isPageLoading && <LoadingModal />}
-      <div className="p-4 flex flex-col items-center justify-center h-full">
-        <div className="flex flex-col items-center justify-center w-full max-w-lg py-8 px-4 rounded-md shadow-md border">
+      <div className="flex flex-col items-center justify-center h-full bg-gray-100 dark:bg-gray-950">
+        <div className="flex flex-col items-center justify-center w-full max-w-lg py-8 px-4 rounded-md shadow-md border bg-background">
           <h1 className="text-2xl sm:text-3xl text-center font-bold mb-2 text-foreground">
             Sign Into Your Account
           </h1>

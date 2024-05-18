@@ -18,14 +18,14 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
       );
     }
 
-    const store = await StoreModel.findOne({ userId: userId });
+    const store = await StoreModel.find({ userId: userId });
 
     if (!store) {
       return NextResponse.json({ message: "Store not found" }, { status: 404 });
     }
 
     return NextResponse.json(
-      { message: "Store found", store: store },
+      { message: "Store found", stores: store },
       { status: 200 }
     );
   } catch (error) {
