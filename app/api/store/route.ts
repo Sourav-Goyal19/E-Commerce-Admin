@@ -30,3 +30,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
+
+export async function GET(req: NextRequest) {
+  const userId = req.nextUrl.searchParams.get("userId");
+  if (!userId) {
+    return NextResponse.json(
+      { message: "UserId is required" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const stores = await StoreModel.find({ userId });
+    return NextResponse.json(
+      {
+        message: "Stores Found Successfully",
+        stores: stores,
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.log("STORE[GET]", error);
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}

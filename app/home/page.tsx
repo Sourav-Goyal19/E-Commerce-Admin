@@ -25,7 +25,7 @@ const Home = () => {
       setIsLoading(true);
       if (user?._id) {
         axios
-          .get(`/api/store/${user?._id}`)
+          .get(`/api/store?userId=${user?._id}`)
           .then((res) => {
             console.log(res.data.stores);
             router.push(`/${res.data.stores[0]._id}`);
@@ -37,7 +37,6 @@ const Home = () => {
             setIsLoading(false);
           });
       }
-      setIsLoading(false);
     };
     fetchStore();
   }, [user]);

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Modal } from "./modal";
 import { Button } from "@/components/ui/button";
 import { useStoreModal } from "@/hooks/useStore";
@@ -20,7 +20,7 @@ import { useUser } from "@/zustand/store";
 import toast from "react-hot-toast";
 
 const StoreModal = () => {
-  const { isOpen, onOpen, onClose } = useStoreModal();
+  const { isOpen, onClose } = useStoreModal();
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -65,7 +65,7 @@ const StoreModal = () => {
         title="Create Store"
         description="Add a store to manage products and categories"
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={() => onClose()}
       >
         <div>
           <div className="py-2 space-y-2 pb-4">
@@ -91,7 +91,10 @@ const StoreModal = () => {
                 <div className="pt-6 space-x-2 flex items-center justify-end">
                   <Button
                     variant="outline"
-                    onClick={onClose}
+                    type="reset"
+                    onClick={() => {
+                      onClose();
+                    }}
                     disabled={isLoading}
                   >
                     Cancel

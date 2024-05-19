@@ -13,8 +13,9 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchStores = async () => {
+      if (!user?._id) return;
       axios
-        .get(`/api/store/${user?._id}`)
+        .get(`/api/store?userId=${user?._id}`)
         .then((res) => {
           console.log(res.data);
           setItems(res.data.stores);
