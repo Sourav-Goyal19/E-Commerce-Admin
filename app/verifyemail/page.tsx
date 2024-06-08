@@ -38,6 +38,7 @@ const ForgotPassword = () => {
       .post("/api/users/newtoken", data)
       .then((res) => {
         toast.success("Verification email sent");
+        form.reset();
       })
       .catch((err) => {
         toast.error(err.response.data.message);
@@ -47,7 +48,7 @@ const ForgotPassword = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gray-100 dark:bg-gray-950">
-      <div className="max-w-md shadow w-full border rounded p-4">
+      <div className="max-w-md shadow w-full border rounded p-4 bg-background">
         <h1 className="text-2xl font-bold text-center capitalize">
           Request a new Verification Email
         </h1>

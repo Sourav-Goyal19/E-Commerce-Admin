@@ -35,6 +35,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!user.isVerified) {
+      return NextResponse.json(
+        { message: "Email not verified" },
+        { status: 401 }
+      );
+    }
+
     const response = NextResponse.json(
       {
         message: "Login successful",

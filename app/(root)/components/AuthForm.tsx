@@ -262,11 +262,18 @@ export default function AuthForm() {
                     );
                   }}
                 />
-                <p className="text-right">
-                  <Link href="/forgotpassword" className="underline italic">
-                    forgot password?
-                  </Link>
-                </p>
+                <div>
+                  <p className="text-right">
+                    <Link href="/forgotpassword" className="underline italic">
+                      forgot password?
+                    </Link>
+                  </p>
+                  <p className="text-right">
+                    <Link href="/verifyemail" className="underline italic">
+                      email verification?
+                    </Link>
+                  </p>
+                </div>
                 <Button type="submit" disabled={isLoading} className="w-full">
                   Submit
                 </Button>
