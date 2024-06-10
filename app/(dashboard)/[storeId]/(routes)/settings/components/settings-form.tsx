@@ -25,6 +25,7 @@ import { useParams, useRouter } from "next/navigation";
 import { StoreData } from "@/models/store.modal";
 import { useUser } from "@/zustand/store";
 import toast from "react-hot-toast";
+import { ApiAlert } from "@/components/ui/api-alert";
 
 interface SettingsFormProps {
   initialData: StoreData;
@@ -138,6 +139,11 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
         </form>
       </Form>
       <Separator />
+      <ApiAlert
+        title="NEXT_PUBLIC_API_URL"
+        description={`${origin}/api/${params.storeId}`}
+        variant="Public"
+      />
     </>
   );
 };
