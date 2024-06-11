@@ -39,7 +39,9 @@ export const ProfileOptions: React.FC<ProfileOptionsProps> = ({ user }) => {
       <div
         className={cn(
           "absolute inset-x-0 -top-16 p-2 bg-background border w-full shadow-lg transition-all duration-300 ease-in-out transform rounded-xl",
-          isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+          isOpen
+            ? "opacity-100 translate-y-0 pointer-events-auto"
+            : "opacity-0 translate-y-2 pointer-events-none"
         )}
       >
         <p className="text-base transition flex items-center cursor-pointer hover:bg-muted rounded-lg py-2 px-2">
