@@ -15,6 +15,12 @@ const Navbar = () => {
   const [items, setItems] = useState<StoreData[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) {
+      setIsOpen(false);
+    }
+  });
+
   useEffect(() => {
     const fetchStores = async () => {
       if (!user?._id) return;
