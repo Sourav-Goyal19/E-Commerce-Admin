@@ -1,5 +1,5 @@
 import { Connect } from "@/dbConfig/connect";
-import { StoreModel } from "@/models/store.modal";
+import { StoreModel } from "@/models/store.model";
 import { NextRequest, NextResponse } from "next/server";
 
 Connect();

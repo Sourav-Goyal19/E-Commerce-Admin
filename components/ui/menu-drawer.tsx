@@ -4,9 +4,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Fragment } from "react";
-import { Button } from "./button";
+import { Button } from "@/components/ui/button";
+import { ProfileOptions } from "@/components/ui/profile-options";
 import { X } from "lucide-react";
-import { ProfileOptions } from "./profile-options";
 
 interface MenuDrawerProps {
   isOpen: boolean;
@@ -105,19 +105,17 @@ const MenuDrawer: React.FC<MenuDrawerProps> = ({ isOpen, onClose, user }) => {
                           </div>
                           <div className="flex flex-col mt-3">
                             {routes.map((route) => (
-                              <>
-                                <Link
-                                  key={route.label}
-                                  href={route.href}
-                                  onClick={onClose}
-                                  className={cn(
-                                    "text-lg capitalize pb-2 pt-3 rounded pl-2 text-foreground border-b-2 border-gray-500 hover:bg-muted transition-all tracking-wider",
-                                    route.active ? "bg-muted" : ""
-                                  )}
-                                >
-                                  {route.label}
-                                </Link>
-                              </>
+                              <Link
+                                key={route.label}
+                                href={route.href}
+                                onClick={onClose}
+                                className={cn(
+                                  "text-lg capitalize pb-2 pt-3 rounded pl-2 text-foreground border-b-2 border-gray-500 hover:bg-muted transition-all tracking-wider",
+                                  route.active ? "bg-muted" : ""
+                                )}
+                              >
+                                {route.label}
+                              </Link>
                             ))}
                           </div>
                         </div>

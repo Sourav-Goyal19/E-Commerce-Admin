@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { StoreData } from "@/models/store.modal";
+import { StoreData } from "@/models/store.model";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";

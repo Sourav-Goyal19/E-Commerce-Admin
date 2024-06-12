@@ -1,5 +1,5 @@
 import FetchUser from "@/components/FetchUser";
-import { StoreModel } from "@/models/store.modal";
+import { StoreModel } from "@/models/store.model";
 import { redirect } from "next/navigation";
 import { SettingsForm } from "./components/settings-form";
 

@@ -1,6 +1,6 @@
 "use client";
 import { LogOut } from "lucide-react";
-import Avatar from "./avatar";
+import Avatar from "@/components/ui/avatar";
 import { UserData } from "@/models/user.model";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";

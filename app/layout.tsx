@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   axios.defaults.withCredentials = true;
   return (
-    <html lang="en" className="">
+    <html lang="en" className="custom-scroll">
       <body className={inter.className}>
         <NextAuthProvider>
           {/* <ReduxProvider> */}

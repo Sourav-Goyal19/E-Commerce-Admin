@@ -1,3 +1,4 @@
+"use client";
 import { Copy, Server as ServerIcon } from "lucide-react";
 import { Badge, BadgeProps } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

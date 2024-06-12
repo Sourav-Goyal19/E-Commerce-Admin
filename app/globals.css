@@ -110,3 +110,19 @@ body,
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .custom-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb {
+    border-radius: 50px;
+    border: 1px solid #ccc;
+    background-color: #000;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    border: 1px solid gray;
+  }
+}

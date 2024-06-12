@@ -1,8 +1,8 @@
 import ModalProvider from "@/components/modals/modalProvider";
 import Navbar from "@/components/navbar";
-import { StoreModel } from "@/models/store.modal";
+import { StoreModel } from "@/models/store.model";
+import mongoose from "mongoose";
 import { redirect } from "next/navigation";
-import React from "react";
 
 const DashboardLayout = async ({
   children,
@@ -11,10 +11,14 @@ const DashboardLayout = async ({
   children: React.ReactNode;
   params: { storeId: string };
 }) => {
+  if (!mongoose.Types.ObjectId.isValid(params.storeId)) {
+    redirect("/home");
+  }
+
   const store = await StoreModel.findById(params.storeId);
 
   if (!store) {
-    redirect("/");
+    redirect("/home");
   }
 
   return (

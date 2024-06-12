@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import {
   Form,
   FormControl,
@@ -14,18 +15,18 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Trash } from "lucide-react";
 import { AlertModal } from "@/components/modals/alert";
+import { ApiAlert } from "@/components/ui/api-alert";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useParams, useRouter } from "next/navigation";
-import { StoreData } from "@/models/store.modal";
+import { StoreData } from "@/models/store.model";
 import { useUser } from "@/zustand/store";
-import toast from "react-hot-toast";
-import { ApiAlert } from "@/components/ui/api-alert";
+import { useOrigin } from "@/hooks/useOrigin";
+import { Trash } from "lucide-react";
 
 interface SettingsFormProps {
   initialData: StoreData;
@@ -40,6 +41,7 @@ type SettingFormValues = z.infer<typeof formSchema>;
 export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
+  const origin = useOrigin();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
