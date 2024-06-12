@@ -110,7 +110,7 @@ const MenuDrawer: React.FC<MenuDrawerProps> = ({ isOpen, onClose, user }) => {
                                 href={route.href}
                                 onClick={onClose}
                                 className={cn(
-                                  "text-lg capitalize pb-2 pt-3 rounded pl-2 text-foreground border-b-2 border-gray-500 hover:bg-muted transition-all tracking-wider",
+                                  "text-base capitalize pb-2 pt-3 rounded pl-2 text-foreground border-b border-border hover:bg-muted transition-all tracking-wider",
                                   route.active ? "bg-muted" : ""
                                 )}
                               >

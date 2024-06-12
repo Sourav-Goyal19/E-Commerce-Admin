@@ -26,7 +26,7 @@ export const ApiAlert: React.FC<ApiAlertProps> = ({
   };
 
   return (
-    <div className="w-full p-3 border rounded-md flex gap-3 overflow-x-auto">
+    <div className="w-full p-3 border rounded-md flex gap-3 overflow-x-auto custom-scrollbar">
       <ServerIcon className="w-4 h-4 mt-1" />
       <div className="flex flex-col w-full">
         <div className="flex items-center gap-3">
@@ -34,10 +34,11 @@ export const ApiAlert: React.FC<ApiAlertProps> = ({
           <Badge variant={variantMap[variant]}>{variant}</Badge>
         </div>
         <div className="mt-3 w-full flex items-center justify-between gap-2">
-          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold truncate">
             {description}
           </code>
           <Button
+            type="button"
             variant="outline"
             size="icon"
             className="mx-2 p-2"

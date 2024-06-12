@@ -25,7 +25,7 @@ export const GET = async (
     if (cachedBillboards && cachedBillboards.length > 0) {
       return NextResponse.json(
         {
-          message: "Billboards found (from cache)",
+          message: "Billboards found (from redis)",
           billboards: cachedBillboards,
         },
         { status: 200 }
