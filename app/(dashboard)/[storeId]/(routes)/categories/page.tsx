@@ -18,6 +18,7 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
       formattedCategories.push({
         id: category._id.toString(),
         name: category.name,
+        //@ts-ignore
         billboardLabel: category.billboardId.label,
         createdAt: format(category.createdAt, "MMMM do, yyyy"),
       });

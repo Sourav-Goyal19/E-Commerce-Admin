@@ -6,6 +6,8 @@ export interface Store extends Document {
   userId: Schema.Types.ObjectId;
   billboards: Schema.Types.ObjectId[];
   categories: Schema.Types.ObjectId[];
+  sizes: Schema.Types.ObjectId[];
+  colors: Schema.Types.ObjectId[];
 }
 export interface StoreData {
   _id: string;
@@ -13,6 +15,8 @@ export interface StoreData {
   userId: Schema.Types.ObjectId;
   billboards: Schema.Types.ObjectId[];
   categories: Schema.Types.ObjectId[];
+  sizes: Schema.Types.ObjectId[];
+  colors: Schema.Types.ObjectId[];
 }
 
 const StoreSchema: Schema<Store> = new Schema(
@@ -35,6 +39,18 @@ const StoreSchema: Schema<Store> = new Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
+      },
+    ],
+    sizes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Sizes",
+      },
+    ],
+    colors: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Colors",
       },
     ],
   },

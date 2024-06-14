@@ -88,7 +88,7 @@ const MenuDrawer: React.FC<MenuDrawerProps> = ({ isOpen, onClose, user }) => {
                 >
                   <Dialog.Panel className="pointer-events-auto w-screen max-w-sm">
                     <div className="h-full flex flex-col justify-between bg-background overflow-y-auto py-5 shadow-xl">
-                      <div className="px-4 sm:px-6 h-full flex flex-col justify-between">
+                      <div className="px-4 sm:px-6 h-full flex flex-col justify-between gap-6">
                         <div>
                           <div className="flex items-start justify-end">
                             <div className="ml-3 flex h-7 items-center">

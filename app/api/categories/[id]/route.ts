@@ -90,6 +90,8 @@ export const POST = async (
       billboardId,
     });
 
+    await redis.del(`categories:${storeId}`);
+
     await StoreModel.findByIdAndUpdate(storeId, {
       $push: { categories: category._id },
     });
@@ -151,13 +153,14 @@ export const PATCH = async (
     }
 
     await redis.del(getCategoryCacheKey(categoryId));
+    await redis.del(`categories:${updatedCategory.storeId}`);
 
     return NextResponse.json(
       { message: "Category Updated", category: updatedCategory },
       { status: 200 }
     );
   } catch (error: any) {
-    console.log("BILLBOARD[PATCH] :", error);
+    console.log("CATEOGORY[PATCH] :", error);
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 };
@@ -193,10 +196,11 @@ export const DELETE = async (
     );
 
     await redis.del(getCategoryCacheKey(categoryId));
+    await redis.del(`categories:${deletedCategory.storeId}`);
 
     return NextResponse.json({ message: "Category Deleted" }, { status: 200 });
   } catch (error: any) {
-    console.log("BILLBOARD[DELETE] :", error);
+    console.log("CATEGORY[DELETE] :", error);
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 };

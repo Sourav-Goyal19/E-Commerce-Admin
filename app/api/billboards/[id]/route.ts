@@ -75,6 +75,8 @@ export const POST = async (
       storeId,
     });
 
+    await redis.del(`billboards:${storeId}`);
+
     const updatedStore = await StoreModel.findByIdAndUpdate(
       storeId,
       { $push: { billboards: Billboard._id } },
@@ -131,6 +133,7 @@ export const PATCH = async (
     }
 
     await redis.del(getBillboardCacheKey(billboardId));
+    await redis.del(`billboards:${updatedBillboard.storeId}`);
 
     return NextResponse.json(
       { message: "Billboard Updated", billboard: updatedBillboard },
@@ -167,13 +170,14 @@ export const DELETE = async (
       );
     }
 
+    await redis.del(getBillboardCacheKey(billboardId));
+    await redis.del(`billboards:${deletedBillboard.storeId}`);
+
     const updatedStore = await StoreModel.findByIdAndUpdate(
       deletedBillboard.storeId,
       { $pull: { billboards: billboardId } },
       { new: true }
     );
-
-    await redis.del(getBillboardCacheKey(billboardId));
 
     return NextResponse.json({ message: "Billboard Deleted" }, { status: 200 });
   } catch (error: any) {
