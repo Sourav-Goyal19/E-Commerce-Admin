@@ -1,5 +1,5 @@
 import { Connect } from "@/dbConfig/connect";
-import { BillboardData, BillboardModel } from "@/models/billboard.model";
+import { BillboardModel } from "@/models/billboard.model";
 import { StoreModel } from "@/models/store.model";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -41,7 +41,7 @@ export const GET = async (
       );
     }
 
-    await redis.set(cacheKey, JSON.stringify(billboard), { ex: 3600 });
+    await redis.set(cacheKey, JSON.stringify(billboard), { ex: 3600 * 24 });
 
     return NextResponse.json({ message: "Billboard found", billboard });
   } catch (error: any) {
@@ -133,7 +133,7 @@ export const PATCH = async (
     await redis.del(getBillboardCacheKey(billboardId));
 
     return NextResponse.json(
-      { message: "Billboard Updated", updatedBillboard },
+      { message: "Billboard Updated", billboard: updatedBillboard },
       { status: 200 }
     );
   } catch (error: any) {

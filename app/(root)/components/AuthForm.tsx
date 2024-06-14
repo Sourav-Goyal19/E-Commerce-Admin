@@ -140,7 +140,10 @@ export default function AuthForm() {
           setUser(res.data.user);
         })
         .catch((err) => {
-          if (err.response.data.message.includes("password")) {
+          if (
+            typeof err.response.data.message == "string" &&
+            err.response.data.message.includes("password")
+          ) {
             form.setError("password", { message: "Incorrect Password" });
           } else {
             toast.error(err.response.data.message);
@@ -154,7 +157,7 @@ export default function AuthForm() {
   return (
     <>
       {isPageLoading && <LoadingModal />}
-      <div className="flex flex-col items-center justify-center h-full bg-gray-100 dark:bg-gray-950">
+      <div className="flex flex-col items-center justify-center h-full bg-background">
         <div className="flex flex-col items-center justify-center w-full max-w-lg py-8 px-4 rounded-md shadow-md border bg-background">
           <h1 className="text-2xl sm:text-3xl text-center font-bold mb-2 text-foreground">
             Sign Into Your Account

@@ -1,5 +1,5 @@
 import ModalProvider from "@/components/modals/modalProvider";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/ui/navbar";
 import { StoreModel } from "@/models/store.model";
 import mongoose from "mongoose";
 import { redirect } from "next/navigation";
@@ -22,7 +22,7 @@ const DashboardLayout = async ({
   }
 
   return (
-    <div>
+    <div className="custom-scroll">
       <ModalProvider />
       <Navbar />
       {children}

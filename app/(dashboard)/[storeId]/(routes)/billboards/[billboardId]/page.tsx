@@ -23,7 +23,7 @@ const BillboardFormPage = async ({
     console.log(foundBillboard);
     if (foundBillboard) {
       billboard = {
-        _id: foundBillboard._id,
+        _id: foundBillboard._id.toString(),
         label: foundBillboard.label,
         imageUrl: foundBillboard.imageUrl,
         storeId: foundBillboard.storeId,

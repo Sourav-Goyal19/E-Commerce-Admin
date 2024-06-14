@@ -1,7 +1,6 @@
 "use client";
 import { useUser } from "@/zustand/store";
-import MainNav from "./MainNav";
-import StoreSwitcher from "./StoreSwitcher";
+import StoreSwitcher from "@/components/StoreSwitcher";
 import Profile from "@/components/ui/profile";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -10,6 +9,7 @@ import MenuDrawer from "@/components/ui/menu-drawer";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { ModeToggle } from "@/components/ui/theme";
+import MainNav from "./MainNav";
 
 const Navbar = () => {
   const { user } = useUser();
@@ -45,7 +45,7 @@ const Navbar = () => {
       <div className="border-b w-full">
         <div className="flex h-16 items-center px-4">
           <StoreSwitcher items={items} />
-          <div className="opacity-0 scale-0 hidden lg:opacity-100 lg:scale-100 lg:flex h-16 items-center w-full">
+          <div className="opacity-0 scale-0 hidden lg:opacity-100 lg:scale-100 lg:flex h-16 items-center gap-4 w-full">
             <MainNav className="mx-6" />
             <ModeToggle />
             <Profile />

@@ -5,7 +5,7 @@ import { useUser } from "@/zustand/store";
 const Profile = () => {
   const { user } = useUser();
   return (
-    <div className="ml-auto flex items-center justify-self-end">
+    <div className="flex items-center justify-self-end">
       <Avatar url={user?.image!} />
     </div>
   );

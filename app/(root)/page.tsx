@@ -2,7 +2,7 @@ import AuthForm from "./components/AuthForm";
 
 const Home = () => {
   return (
-    <div className="h-full">
+    <div className="h-screen">
       <AuthForm />
     </div>
   );

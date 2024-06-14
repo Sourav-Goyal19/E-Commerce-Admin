@@ -9,10 +9,12 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
   if (mongoose.Types.ObjectId.isValid(params.storeId)) {
     billboards = await BillboardModel.find({
       storeId: params.storeId,
-    }).sort({ createdAt: -1 });
+    })
+      .sort({ createdAt: -1 })
+      .populate("storeId");
 
     billboards = billboards.map((billboard) => ({
-      id: billboard._id,
+      id: billboard._id.toString(),
       label: billboard.label,
       createdAt: format(billboard.createdAt, "MMMM do, yyyy"),
     }));

@@ -53,7 +53,7 @@ export const ProfileOptions: React.FC<ProfileOptionsProps> = ({ user }) => {
         className="border-2 p-2 rounded-xl flex items-center w-full mb-4 gap-3 hover:bg-muted cursor-pointer"
       >
         <Avatar url={user?.image!} />
-        <p className="text-xl">{user?.username}</p>
+        <p className="text-lg">{user?.username}</p>
       </div>
     </div>
   );

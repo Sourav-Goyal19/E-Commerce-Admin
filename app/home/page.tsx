@@ -23,7 +23,9 @@ const Home = () => {
   useEffect(() => {
     const fetchStore = async () => {
       setIsLoading(true);
+      console.log("Call");
       if (user?._id) {
+        console.log("Calling");
         axios
           .get(`/api/store?userId=${user?._id}`)
           .then((res) => {

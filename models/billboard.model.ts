@@ -28,7 +28,7 @@ const BillboardSchema = new Schema<Billboard>(
     },
     storeId: {
       type: Schema.Types.ObjectId,
-      ref: "Store",
+      ref: "Stores",
       required: true,
     },
   },
@@ -36,5 +36,5 @@ const BillboardSchema = new Schema<Billboard>(
 );
 
 export const BillboardModel =
-  (models.Billboard as mongoose.Model<Billboard>) ||
-  model<Billboard>("Billboard", BillboardSchema);
+  (models.Billboards as mongoose.Model<Billboard>) ||
+  model<Billboard>("Billboards", BillboardSchema);

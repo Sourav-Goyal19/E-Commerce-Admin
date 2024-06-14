@@ -18,7 +18,7 @@ export async function GET(
     .select("-provider");
 
   if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
   return NextResponse.json(
     {

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const user: User | null = await UserModel.findOne({ email });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     console.log(user);
@@ -69,6 +69,6 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error: any) {
-    NextResponse.json({ error: error.message }, { status: 500 });
+    NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
