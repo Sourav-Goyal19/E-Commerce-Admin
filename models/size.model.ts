@@ -5,6 +5,7 @@ interface Size extends Document {
   name: string;
   value: string;
   storeId: mongoose.Schema.Types.ObjectId | string;
+  colorId: mongoose.Schema.Types.ObjectId | string;
   createdAt: Date;
 }
 
@@ -13,6 +14,7 @@ export interface SizeData {
   name: string;
   value: string;
   storeId: mongoose.Schema.Types.ObjectId | string;
+  colorId: mongoose.Schema.Types.ObjectId | string;
   createdAt: string;
 }
 
@@ -30,6 +32,10 @@ const sizeSchema: Schema<Size> = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Stores",
       required: true,
+    },
+    colorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Colors",
     },
   },
   { timestamps: true }
