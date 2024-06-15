@@ -37,11 +37,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ProductImageModal } from "./product-image-modal";
+import { ProductImageData } from "@/models/productImage.model";
+import { CellAction } from "./product-image-cell-action";
 
 interface ProductFormProps {
   initialData: ProductData;
   colors: ColorData[];
-  // sizes: SizeData[];
+  sizes: SizeData[];
   categories: CategoryData[];
 }
 
@@ -60,6 +63,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
   colors,
   categories,
+  sizes,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -71,73 +75,46 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [alreadySelectedColor, setalreadySelectedColor] = useState<string[]>(
+    []
+  );
+  const [selectedColorWithImages, setSelectedColorWithImages] = useState<
+    ProductImageData[]
+  >([]);
+
+  const [selectedImages, setSelectedImages] = useState<ProductImageData | null>(
+    null
+  );
+  const [selectedSize, setSelectedSize] = useState<SizeData | null>(null);
+
+  const [selectedColor, setSelectedColor] = useState<ColorData>();
+  const [colorsLength, setColorsLength] = useState<Array<number>>([]);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialData,
-      categoryId: initialData.categoryId as string,
+      categoryId: initialData.categoryId._id.toString(),
     },
   });
 
+  const fetchProductColor = (colorId: string) => {
+    const newColor = colors.find((color) => color._id === colorId);
+    setSelectedColor(newColor!);
+  };
+
+  const fetchedSize = (sizeId: string) => {
+    const newsize = sizes.find((size) => size._id === sizeId);
+    setSelectedSize(newsize!);
+  };
+
   const onSubmit = (data: ProductFormValues) => {
     console.log(data);
-    // setLoading(true);
-    // if (initialData._id !== "") {
-    //   axios
-    //     .patch(`/api/products/${params.billboardId}`, JSON.stringify(data), {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //     })
-    //     .then((res) => {
-    //       router.push(`/${params.storeId}/products`);
-    //       toast.success(res.data.message);
-    //       router.refresh();
-    //     })
-    //     .catch((err) => {
-    //       toast.error(err.response.data.message || "Something went wrong");
-    //     })
-    //     .finally(() => {
-    //       setLoading(false);
-    //     });
-    // } else {
-    //   axios
-    //     .post(`/api/products/${params.storeId}`, JSON.stringify(data), {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //     })
-    //     .then((res) => {
-    //       router.push(`/${params.storeId}/products`);
-    //       toast.success(res.data.message);
-    //       router.refresh();
-    //     })
-    //     .catch((err) => {
-    //       toast.error(err.response.data.message || "Something went wrong");
-    //     })
-    //     .finally(() => {
-    //       setLoading(false);
-    //     });
-    // }
   };
 
   const onDelete = () => {
     setLoading(true);
-    axios
-      .delete(`/api/products/${params.billboardId}`)
-      .then((res) => {
-        router.push(`/${params.storeId}/products`);
-        toast.success(res.data.message);
-        router.refresh();
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message || "Something went wrong");
-      })
-      .finally(() => {
-        setLoading(false);
-        setOpen(false);
-      });
   };
 
   return (
@@ -147,6 +124,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+      />
+      <ProductImageModal
+        title="Add Details"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        colors={colors.filter(
+          (color) => !alreadySelectedColor.includes(color._id)
+        )}
+        allSizes={sizes}
+        productImages={selectedImages}
+        size={selectedSize}
+        setSelectedColorWithImages={setSelectedColorWithImages}
+        storeId={params.storeId.toString()}
       />
       <div className="flex justify-between items-center">
         <Heading title={title} description={description} />
@@ -293,7 +283,23 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </FormItem>
               )}
             />
+            <Button
+              type="button"
+              variant={"secondary"}
+              onClick={() => {
+                setIsOpen(true);
+              }}
+            >
+              Add Images
+            </Button>
           </div>
+          {selectedColorWithImages.length > 0 &&
+            selectedColorWithImages.map((image) => (
+              <div key={image._id} className="grid grid-cols-2 gap-2">
+                <div>Images :{image.imageUrls.length}</div>
+                <CellAction />
+              </div>
+            ))}
           <Button type="submit" disabled={loading}>
             {action}
           </Button>

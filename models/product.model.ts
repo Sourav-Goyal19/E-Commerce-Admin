@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import mongoose, { Document, Schema, model, models } from "mongoose";
 import { SizeData } from "./size.model";
 import { ColorData } from "./color.model";
 import { ProductImageData } from "./productImage.model";
@@ -25,13 +25,13 @@ export interface ProductData {
   description: string;
   isFeatured: boolean;
   isArchived: boolean;
-  sizeId: string | mongoose.Schema.Types.ObjectId[] | SizeData[];
-  colorId: string | mongoose.Schema.Types.ObjectId[] | ColorData[];
+  sizeId: SizeData[];
+  colorId: ColorData[];
   productImageId:
     | string
     | mongoose.Schema.Types.ObjectId[]
     | ProductImageData[];
-  categoryId: string | mongoose.Schema.Types.ObjectId | CategoryData;
+  categoryId: CategoryData;
   storeId: string | mongoose.Schema.Types.ObjectId;
   createdAt: string;
 }

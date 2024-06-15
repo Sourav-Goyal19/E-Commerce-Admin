@@ -24,9 +24,15 @@ const BillboardFormPage = async ({
     isFeatured: false,
     isArchived: false,
     productImageId: "",
-    colorId: "",
-    sizeId: "",
-    categoryId: "",
+    colorId: [],
+    sizeId: [],
+    categoryId: {
+      _id: "",
+      name: "",
+      storeId: "",
+      billboardId: "",
+      createdAt: "",
+    },
     storeId: params.storeId,
     createdAt: "",
   };
@@ -38,9 +44,12 @@ const BillboardFormPage = async ({
   }
 
   if (mongoose.Types.ObjectId.isValid(params.productId)) {
-    const foundProduct = await ProductModel.findOne({
+    const foundProduct = await ProductModel.findOne<ProductData>({
       _id: params.productId,
-    });
+    })
+      .populate("categoryId")
+      .populate("colorId")
+      .populate("sizeId");
     console.log(foundProduct);
 
     if (foundProduct) {
@@ -69,6 +78,7 @@ const BillboardFormPage = async ({
             initialData={product}
             categories={categories}
             colors={colors}
+            sizes={sizes}
           />
         </div>
       </div>

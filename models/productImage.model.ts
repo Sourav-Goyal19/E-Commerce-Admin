@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import mongoose, { Document, Schema, model, models } from "mongoose";
 
 interface ProductImage extends Document {
   imageUrls: string[];
@@ -13,6 +13,7 @@ export interface ProductImageData {
   productId: string | mongoose.Schema.Types.ObjectId;
   colorId: string | mongoose.Schema.Types.ObjectId[];
   storeId: string | mongoose.Schema.Types.ObjectId;
+  sizeId: string | mongoose.Schema.Types.ObjectId;
 }
 
 const productImagesSchema: Schema<ProductImage> = new Schema(
