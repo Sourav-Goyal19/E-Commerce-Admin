@@ -1,5 +1,4 @@
 "use client";
-import { Modal } from "@/components/modals/modal";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -9,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Heading } from "@/components/ui/heading";
 import ImageUpload from "@/components/ui/image-upload";
 import {
   Select,
@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { ColorData } from "@/models/color.model";
 import { ProductImageData } from "@/models/productImage.model";
 import { SizeData } from "@/models/size.model";
@@ -34,11 +35,12 @@ interface ProductImageModalProps {
   color?: ColorData;
   allSizes: SizeData[];
   productImages?: ProductImageData | null;
-  size: SizeData | null;
+  size?: SizeData;
   colors: ColorData[];
   setSelectedColorWithImages: React.Dispatch<
     React.SetStateAction<ProductImageData[]>
   >;
+  setalreadySelectedColor: React.Dispatch<React.SetStateAction<string[]>>;
   storeId: string;
 }
 
@@ -61,6 +63,7 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
   colors,
   storeId,
   setSelectedColorWithImages,
+  setalreadySelectedColor,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -68,29 +71,39 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       images: productImages ? productImages.imageUrls : [],
-      sizeId: size ? size._id : "",
-      colorId: color?._id,
+      sizeId: size?._id || "",
+      colorId: color?._id || "",
     },
   });
 
   const onSubmit = (data: ProductImageFormValues) => {
+    console.log(data);
     setLoading(true);
-    if (color?._id == "") {
+    if (!color?._id) {
       axios
-        .post(`/api/productImages/${storeId}`, data)
+        .post(`/api/productimages/${storeId}`, {
+          imageUrls: data.images,
+          colorId: data.colorId,
+          sizeId: data.sizeId,
+        })
         .then((res) => {
           console.log(res.data);
+          const productImage: ProductImageData = res.data.productImage;
           setSelectedColorWithImages((prev) => [
             ...prev,
             {
-              colorId: data.colorId,
-              sizeId: data.sizeId,
-              imageUrls: data.images,
-              _id: res.data.productImage._id,
-              productId: res.data.productImage.productId,
-              storeId: res.data.productImage.storeId,
+              colorId: productImage.colorId,
+              sizeId: productImage.sizeId,
+              imageUrls: productImage.imageUrls,
+              _id: productImage._id,
+              storeId: productImage.storeId,
             },
           ]);
+          setalreadySelectedColor((prev) => [
+            ...prev,
+            productImage.colorId.toString(),
+          ]);
+          form.reset();
         })
         .catch((err) => {
           console.log(err);
@@ -103,14 +116,12 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
   };
 
   return (
-    <Modal title={title} isOpen={isOpen} onClose={onClose}>
-      <Separator />
+    <div className={cn(isOpen ? "block" : "hidden")}>
+      <Heading title="Add Images" />
+      <Separator className="mt-2" />
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-3 w-[400px] h-[500px] pt-4"
-        >
-          <div className="grid grid-rows-3 gap-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 py-4">
+          <div className="grid grid-cols-2 gap-8">
             <FormField
               control={form.control}
               name="colorId"
@@ -167,35 +178,35 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="images"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Images</FormLabel>
-                  <FormControl>
-                    <ImageUpload
-                      value={field.value}
-                      onChange={(url) => field.onChange([...field.value, url])}
-                      onRemove={(url) =>
-                        field.onChange([
-                          ...field.value.map((imageUrl) => imageUrl != url),
-                        ])
-                      }
-                      disabled={loading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
+          <FormField
+            control={form.control}
+            name="images"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Images</FormLabel>
+                <FormControl>
+                  <ImageUpload
+                    value={field.value}
+                    onChange={(url) => field.onChange([...field.value, url])}
+                    onRemove={(url) =>
+                      field.onChange([
+                        ...field.value.map((imageUrl) => imageUrl != url),
+                      ])
+                    }
+                    disabled={loading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button type="submit" disabled={loading}>
-            Continue
+            Done
           </Button>
         </form>
       </Form>
-      <Separator />
-    </Modal>
+      <Separator className="mt-2" />
+    </div>
   );
 };

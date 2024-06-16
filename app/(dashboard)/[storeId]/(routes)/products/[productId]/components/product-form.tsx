@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {
@@ -40,6 +40,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ProductImageModal } from "./product-image-modal";
 import { ProductImageData } from "@/models/productImage.model";
 import { CellAction } from "./product-image-cell-action";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface ProductFormProps {
   initialData: ProductData;
@@ -86,7 +94,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [selectedImages, setSelectedImages] = useState<ProductImageData | null>(
     null
   );
-  const [selectedSize, setSelectedSize] = useState<SizeData | null>(null);
+  const [selectedSize, setSelectedSize] = useState<SizeData>();
 
   const [selectedColor, setSelectedColor] = useState<ColorData>();
   const [colorsLength, setColorsLength] = useState<Array<number>>([]);
@@ -117,6 +125,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     setLoading(true);
   };
 
+  useEffect(() => {
+    console.log(selectedColorWithImages);
+  }, [selectedColorWithImages]);
+
   return (
     <>
       <AlertModal
@@ -125,19 +137,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         onConfirm={onDelete}
         loading={loading}
       />
-      <ProductImageModal
-        title="Add Details"
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        colors={colors.filter(
-          (color) => !alreadySelectedColor.includes(color._id)
-        )}
-        allSizes={sizes}
-        productImages={selectedImages}
-        size={selectedSize}
-        setSelectedColorWithImages={setSelectedColorWithImages}
-        storeId={params.storeId.toString()}
-      />
+
       <div className="flex justify-between items-center">
         <Heading title={title} description={description} />
         {initialData._id !== "" && (
@@ -287,25 +287,59 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               type="button"
               variant={"secondary"}
               onClick={() => {
-                setIsOpen(true);
+                setIsOpen(!isOpen);
               }}
             >
               Add Images
             </Button>
           </div>
-          {selectedColorWithImages.length > 0 &&
-            selectedColorWithImages.map((image) => (
-              <div key={image._id} className="grid grid-cols-2 gap-2">
-                <div>Images :{image.imageUrls.length}</div>
-                <CellAction />
-              </div>
-            ))}
-          <Button type="submit" disabled={loading}>
-            {action}
-          </Button>
         </form>
       </Form>
-      <Separator />
+      <ProductImageModal
+        title="Add Details"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        colors={colors.filter(
+          (color) => !alreadySelectedColor.includes(color._id)
+        )}
+        allSizes={sizes}
+        productImages={selectedImages}
+        size={selectedSize}
+        setSelectedColorWithImages={setSelectedColorWithImages}
+        storeId={params.storeId.toString()}
+        setalreadySelectedColor={setalreadySelectedColor}
+      />
+      {selectedColorWithImages.length > 0 && (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Images</TableHead>
+              <TableHead>Color</TableHead>
+              <TableHead>Size</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {selectedColorWithImages.map((image) => (
+              <TableRow>
+                <TableCell>{image.imageUrls.length}</TableCell>
+                <TableCell>
+                  {colors.find((color) => color._id == image.colorId)?.name}
+                </TableCell>
+                <TableCell>
+                  {sizes.find((size) => size._id == image.sizeId)?.name}
+                </TableCell>
+                <TableCell>
+                  <CellAction />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+      <Button type="submit" disabled={loading}>
+        {action}
+      </Button>
     </>
   );
 };

@@ -4,6 +4,7 @@ import { CldUploadWidget } from "next-cloudinary";
 import { Button } from "@/components/ui/button";
 import { ImagePlus, Trash } from "lucide-react";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface ImageUploadProps {
   disabled?: boolean;
@@ -34,7 +35,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   return (
     <div>
-      <div className="mb-4 flex items-center gap-4 overflow-auto">
+      <div
+        className={cn(
+          "flex items-center gap-4 overflow-auto",
+          value.length > 0 && "mb-4"
+        )}
+      >
         {value.map((url) => (
           <div
             key={url}
