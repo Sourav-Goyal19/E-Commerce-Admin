@@ -12,7 +12,7 @@ interface Product extends Document {
   isArchived: boolean;
   sizeId: string | mongoose.Schema.Types.ObjectId[];
   colorId: string | mongoose.Schema.Types.ObjectId[];
-  productImageId: string | mongoose.Schema.Types.ObjectId[];
+  productImages: string | mongoose.Schema.Types.ObjectId[];
   categoryId: string | mongoose.Schema.Types.ObjectId;
   storeId: string | mongoose.Schema.Types.ObjectId;
   createdAt: Date;
@@ -25,13 +25,10 @@ export interface ProductData {
   description: string;
   isFeatured: boolean;
   isArchived: boolean;
-  sizeId: SizeData[];
-  colorId: ColorData[];
-  productImageId:
-    | string
-    | mongoose.Schema.Types.ObjectId[]
-    | ProductImageData[];
-  categoryId: CategoryData;
+  sizeId: SizeData[] | string[];
+  colorId: ColorData[] | string[];
+  productImages: string | mongoose.Schema.Types.ObjectId[] | ProductImageData[];
+  categoryId: CategoryData | string;
   storeId: string | mongoose.Schema.Types.ObjectId;
   createdAt: string;
 }
@@ -70,7 +67,7 @@ const productSchema: Schema<Product> = new Schema(
         ref: "Colors",
       },
     ],
-    productImageId: [
+    productImages: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ProductImages",

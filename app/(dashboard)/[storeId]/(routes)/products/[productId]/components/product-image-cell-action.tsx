@@ -15,25 +15,46 @@ import axios from "axios";
 import { AlertModal } from "@/components/modals/alert";
 
 interface CellActionProps {
-  fetchedSize: (sizeId: string) => void;
-  fetchedColor: (colorId: string) => void;
+  productImageId: string;
+  handleProductImageUpdate: (id: string) => void;
+  handleProductImageDelete: (id: string) => void;
 }
 
-export const CellAction = () => {
+export const CellAction: React.FC<CellActionProps> = ({
+  productImageId,
+  handleProductImageUpdate,
+  handleProductImageDelete,
+}) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const onCopy = () => {
-    // navigator.clipboard.writeText(data.id);
+    navigator.clipboard.writeText(productImageId);
     toast.success("Product Id Copied to Clipboard");
   };
 
   const onEdit = () => {
-    // router.push(`products/${data.id}`);
+    handleProductImageUpdate(productImageId);
   };
 
-  const onDelete = () => {};
+  const onDelete = () => {
+    setLoading(true);
+    axios
+      .delete(`/api/productimages/${productImageId}`)
+      .then((res) => {
+        toast.success(res.data.message);
+        handleProductImageDelete(productImageId);
+        router.refresh();
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      })
+      .finally(() => {
+        setLoading(false);
+        setOpen(false);
+      });
+  };
 
   return (
     <>

@@ -23,7 +23,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useParams, useRouter } from "next/navigation";
-import { Trash } from "lucide-react";
+import { Plus, Trash, X } from "lucide-react";
 import { ProductData } from "@/models/product.model";
 import { ColorData } from "@/models/color.model";
 import { SizeData } from "@/models/size.model";
@@ -37,7 +37,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ProductImageModal } from "./product-image-modal";
 import { ProductImageData } from "@/models/productImage.model";
 import { CellAction } from "./product-image-cell-action";
 import {
@@ -48,17 +47,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ProductImageModal } from "./product-image-modal";
 
 interface ProductFormProps {
   initialData: ProductData;
   colors: ColorData[];
   sizes: SizeData[];
   categories: CategoryData[];
+  productImages: ProductImageData[];
 }
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  price: z.coerce.number().min(1, { message: "Price must be greater than 0" }),
+  price: z.coerce.number().min(1, { message: "Proper price is required" }),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
   description: z.string().min(1, "Description is required"),
@@ -72,6 +73,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   colors,
   categories,
   sizes,
+  productImages,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -79,7 +81,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const title = initialData._id !== "" ? "Edit Product" : "Create Product";
   const description =
     initialData._id !== "" ? "Edit a product" : "Add a new product";
-  const action = initialData._id !== "" ? "Save Changes" : "Create";
+  const action = initialData._id !== "" ? "Save Changes" : "Create Product";
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -90,44 +92,126 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [selectedColorWithImages, setSelectedColorWithImages] = useState<
     ProductImageData[]
   >([]);
+  const [selectedSize, setSelectedSize] = useState<string[]>([]);
 
-  const [selectedImages, setSelectedImages] = useState<ProductImageData | null>(
-    null
-  );
-  const [selectedSize, setSelectedSize] = useState<SizeData>();
-
-  const [selectedColor, setSelectedColor] = useState<ColorData>();
-  const [colorsLength, setColorsLength] = useState<Array<number>>([]);
+  const [selectedImages, setSelectedImages] = useState<ProductImageData>();
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialData,
-      categoryId: initialData.categoryId._id.toString(),
+      categoryId: initialData.categoryId as string,
     },
   });
 
-  const fetchProductColor = (colorId: string) => {
-    const newColor = colors.find((color) => color._id === colorId);
-    setSelectedColor(newColor!);
+  const handleProductImageUpdate = (id: string) => {
+    const productImage = selectedColorWithImages.find(
+      (productImage) => productImage._id == id
+    );
+    console.log(productImage);
+    if (productImage) {
+      setSelectedImages(productImage);
+      setIsOpen(true);
+    }
   };
 
-  const fetchedSize = (sizeId: string) => {
-    const newsize = sizes.find((size) => size._id === sizeId);
-    setSelectedSize(newsize!);
+  const handleProductImageDelete = (id: string) => {
+    const deleteProductImage = selectedColorWithImages.find(
+      (productImage) => productImage._id == id
+    );
+    if (deleteProductImage) {
+      setSelectedColorWithImages((prev) =>
+        prev.filter(
+          (productImage) => productImage._id != deleteProductImage._id
+        )
+      );
+      setalreadySelectedColor((prev) =>
+        prev.filter((color) => color != deleteProductImage.colorId)
+      );
+    }
   };
 
   const onSubmit = (data: ProductFormValues) => {
-    console.log(data);
-  };
-
-  const onDelete = () => {
     setLoading(true);
+    console.log(data);
+    if (selectedColorWithImages.length <= 0) {
+      setLoading(false);
+      return toast.error("Product Images are required");
+    }
+    if (initialData._id == "") {
+      axios
+        .post(`/api/products/${params.storeId}`, {
+          name: data.name,
+          price: data.price,
+          description: data.description,
+          isFeatured: data.isFeatured,
+          isArchived: data.isArchived,
+          categoryId: data.categoryId,
+          productImages: selectedColorWithImages,
+          sizeId: selectedSize,
+          colorId: alreadySelectedColor,
+        })
+        .then((res) => {
+          toast.success(res.data.message);
+          router.push(`/${params.storeId}/products`);
+          router.refresh();
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message || "Something went wrong");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      axios
+        .patch(`/api/products/${initialData._id}`, {
+          name: data.name,
+          price: data.price,
+          description: data.description,
+          isFeatured: data.isFeatured,
+          isArchived: data.isArchived,
+          categoryId: data.categoryId,
+          productImages: selectedColorWithImages,
+          sizeId: selectedSize,
+          colorId: alreadySelectedColor,
+        })
+        .then((res) => {
+          toast.success(res.data.message);
+          router.push(`/${params.storeId}/products`);
+          router.refresh();
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message || "Something went wrong");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
 
   useEffect(() => {
-    console.log(selectedColorWithImages);
-  }, [selectedColorWithImages]);
+    if (initialData._id) {
+      setSelectedColorWithImages(productImages);
+      setSelectedSize(initialData.sizeId as string[]);
+      setalreadySelectedColor(initialData.colorId as string[]);
+    }
+  }, []);
+
+  const onDelete = () => {
+    setLoading(true);
+    axios
+      .delete(`/api/products/${initialData._id}`)
+      .then((res) => {
+        toast.success(res.data.message);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message || "Something went wrong");
+      })
+      .finally(() => {
+        setLoading(false);
+        setIsOpen(false);
+      });
+  };
 
   return (
     <>
@@ -203,6 +287,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <FormControl>
                     <Textarea
                       placeholder="Product description"
+                      className="custom-scroll"
                       disabled={loading}
                       {...field}
                     />
@@ -285,30 +370,61 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
             <Button
               type="button"
-              variant={"secondary"}
+              variant="secondary"
               onClick={() => {
                 setIsOpen(!isOpen);
+                setSelectedImages(undefined);
               }}
+              disabled={alreadySelectedColor.length === colors.length}
             >
-              Add Images
+              {isOpen ? (
+                <>
+                  <X className="mr-2 w-4 h-4" />
+                  Close
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 w-4 h-4" />
+                  Add Images
+                </>
+              )}
             </Button>
           </div>
+          <Button
+            onClick={() => form.trigger()}
+            type="submit"
+            disabled={loading}
+          >
+            {action}
+          </Button>
         </form>
       </Form>
       <ProductImageModal
         title="Add Details"
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        colors={colors.filter(
-          (color) => !alreadySelectedColor.includes(color._id)
-        )}
-        allSizes={sizes}
-        productImages={selectedImages}
-        size={selectedSize}
+        colors={
+          selectedImages?._id
+            ? [
+                ...colors.filter(
+                  (color) => !alreadySelectedColor.includes(color._id)
+                ),
+                colors.find(
+                  (color) => color._id == selectedImages.colorId
+                ) as ColorData,
+              ].filter(Boolean)
+            : colors.filter(
+                (color) => !alreadySelectedColor.includes(color._id)
+              )
+        }
+        sizes={sizes}
+        productImage={selectedImages}
         setSelectedColorWithImages={setSelectedColorWithImages}
         storeId={params.storeId.toString()}
         setalreadySelectedColor={setalreadySelectedColor}
+        setSelectedSize={setSelectedSize}
       />
+
       {selectedColorWithImages.length > 0 && (
         <Table>
           <TableHeader>
@@ -330,16 +446,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   {sizes.find((size) => size._id == image.sizeId)?.name}
                 </TableCell>
                 <TableCell>
-                  <CellAction />
+                  <CellAction
+                    productImageId={image._id.toString()}
+                    handleProductImageUpdate={handleProductImageUpdate}
+                    handleProductImageDelete={handleProductImageDelete}
+                  />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       )}
-      <Button type="submit" disabled={loading}>
-        {action}
-      </Button>
     </>
   );
 };

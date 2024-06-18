@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, model, models } from "mongoose";
 
-interface ProductImage extends Document {
+interface ProductImages extends Document {
   imageUrls: string[];
   productId: string | mongoose.Schema.Types.ObjectId;
   colorId: string | mongoose.Schema.Types.ObjectId;
@@ -17,7 +17,7 @@ export interface ProductImageData {
   sizeId: string | mongoose.Schema.Types.ObjectId;
 }
 
-const productImagesSchema: Schema<ProductImage> = new Schema(
+const ProductImagesSchema: Schema<ProductImages> = new Schema(
   {
     imageUrls: [
       {
@@ -48,5 +48,5 @@ const productImagesSchema: Schema<ProductImage> = new Schema(
 );
 
 export const ProductImageModel =
-  (models.ProductImages as mongoose.Model<ProductImage>) ||
-  model<ProductImage>("ProductImages", productImagesSchema);
+  (models.ProductImages as mongoose.Model<ProductImages>) ||
+  model<ProductImages>("ProductImages", ProductImagesSchema);

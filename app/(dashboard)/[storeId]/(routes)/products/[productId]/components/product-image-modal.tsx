@@ -24,7 +24,7 @@ import { ProductImageData } from "@/models/productImage.model";
 import { SizeData } from "@/models/size.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -33,19 +33,20 @@ interface ProductImageModalProps {
   isOpen: boolean;
   onClose: () => void;
   color?: ColorData;
-  allSizes: SizeData[];
-  productImages?: ProductImageData | null;
+  sizes: SizeData[];
+  productImage?: ProductImageData;
   size?: SizeData;
   colors: ColorData[];
   setSelectedColorWithImages: React.Dispatch<
     React.SetStateAction<ProductImageData[]>
   >;
   setalreadySelectedColor: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedSize: React.Dispatch<React.SetStateAction<string[]>>;
   storeId: string;
 }
 
 const formSchema = z.object({
-  images: z.string().array(),
+  images: z.string().array().min(1, "Atleast one image is required"),
   sizeId: z.string().min(1, "Size is required"),
   colorId: z.string().min(1, "Color is required"),
 });
@@ -56,30 +57,62 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
   title,
   isOpen,
   onClose,
-  color,
-  allSizes,
-  productImages,
-  size,
+  sizes,
+  productImage,
   colors,
   storeId,
   setSelectedColorWithImages,
   setalreadySelectedColor,
+  setSelectedSize,
 }) => {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<ProductImageFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      images: productImages ? productImages.imageUrls : [],
-      sizeId: size?._id || "",
-      colorId: color?._id || "",
+      images: productImage?._id ? productImage.imageUrls : [],
+      sizeId: productImage?._id && productImage.sizeId.toString(),
+      colorId: productImage?._id && productImage.colorId.toString(),
     },
   });
+
+  useEffect(() => {
+    if (productImage) {
+      form.reset({
+        images: productImage.imageUrls,
+        sizeId: productImage.sizeId.toString(),
+        colorId: productImage.colorId.toString(),
+      });
+    } else {
+      form.reset({
+        images: [],
+        sizeId: "",
+        colorId: "",
+      });
+    }
+  }, [productImage, isOpen, form]);
+
+  const handleImageChange = useCallback(
+    (url: string) => {
+      form.setValue("images", [...form.getValues("images"), url]);
+    },
+    [form]
+  );
+
+  const handleImageRemove = useCallback(
+    (url: string) => {
+      form.setValue(
+        "images",
+        form.getValues("images").filter((image) => image !== url)
+      );
+    },
+    [form]
+  );
 
   const onSubmit = (data: ProductImageFormValues) => {
     console.log(data);
     setLoading(true);
-    if (!color?._id) {
+    if (!productImage?._id) {
       axios
         .post(`/api/productimages/${storeId}`, {
           imageUrls: data.images,
@@ -103,7 +136,49 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
             ...prev,
             productImage.colorId.toString(),
           ]);
-          form.reset();
+          setSelectedSize((prev) => [...prev, productImage.sizeId.toString()]);
+          form.reset({
+            images: [],
+            sizeId: "",
+            colorId: "",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setLoading(false);
+          onClose();
+        });
+    } else {
+      axios
+        .patch(`/api/productimages/${productImage?._id}`, {
+          imageUrls: data.images,
+          colorId: data.colorId,
+          sizeId: data.sizeId,
+        })
+        .then((res) => {
+          console.log(res.data);
+          const productImage: ProductImageData = res.data.productImage;
+          setSelectedColorWithImages((prev) => [
+            ...prev.filter((item) => item._id !== productImage._id),
+            {
+              colorId: productImage.colorId,
+              sizeId: productImage.sizeId,
+              imageUrls: productImage.imageUrls,
+              _id: productImage._id,
+              storeId: productImage.storeId,
+            },
+          ]);
+          setalreadySelectedColor((prev) => [
+            ...prev.filter((item) => item !== productImage.colorId.toString()),
+            productImage.colorId.toString(),
+          ]);
+          form.reset({
+            images: [],
+            sizeId: "",
+            colorId: "",
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -130,7 +205,8 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
                   <FormLabel>Color</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={field.value == "" ? undefined : field.value}
+                    disabled={loading}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -158,7 +234,8 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
                   <FormLabel>Size</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={field.value == "" ? undefined : field.value}
+                    disabled={loading}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -166,15 +243,14 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {allSizes.length > 0 &&
-                        allSizes.map((size) => (
+                      {sizes.length > 0 &&
+                        sizes.map((size) => (
                           <SelectItem key={size._id} value={size._id}>
                             {size.name}
                           </SelectItem>
                         ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -188,12 +264,8 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
                 <FormControl>
                   <ImageUpload
                     value={field.value}
-                    onChange={(url) => field.onChange([...field.value, url])}
-                    onRemove={(url) =>
-                      field.onChange([
-                        ...field.value.map((imageUrl) => imageUrl != url),
-                      ])
-                    }
+                    onChange={handleImageChange}
+                    onRemove={handleImageRemove}
                     disabled={loading}
                   />
                 </FormControl>

@@ -5,17 +5,14 @@ import { ProductData, ProductModel } from "@/models/product.model";
 import { ProductClient } from "./components/client";
 import { ProductColoumn } from "./components/columns";
 import { formatter } from "@/lib/utils";
+import { CategoryData } from "@/models/category.model";
 
 const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
   let formattedProducts: ProductColoumn[] = [];
   if (mongoose.Types.ObjectId.isValid(params.storeId)) {
     const products = await ProductModel.find<ProductData>({
       storeId: params.storeId,
-    })
-      .sort({ createdAt: -1 })
-      .populate("categoryId", "sizeId", "colorId");
-
-    console.log(products);
+    }).populate("categoryId");
 
     products.forEach((product) => {
       formattedProducts.push({
@@ -24,12 +21,9 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
         price: formatter.format(product.price),
         isFeatured: product.isFeatured,
         isArchived: product.isArchived,
-        //@ts-ignore
-        size: product.sizeId[0].name,
-        //@ts-ignore
-        color: product.colorId[0].name,
-        //@ts-ignore
-        category: product.categoryId.name,
+        sizes: product.sizeId.length,
+        colors: product.colorId.length,
+        category: (product.categoryId as CategoryData).name,
         createdAt: format(product.createdAt, "MMMM dd, yyyy"),
       });
     });

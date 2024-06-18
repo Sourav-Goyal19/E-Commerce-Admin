@@ -87,6 +87,7 @@ body,
   }
 
   .custom-scroll::-webkit-scrollbar-thumb {
+    cursor: default;
     border-radius: 50px;
     border: 1px solid #ccc;
     background-color: #000;

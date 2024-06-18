@@ -32,7 +32,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
       <Separator />
       <DataTable
         columns={columns}
-        searchKey="label"
+        searchKey="name"
         //@ts-ignore
         data={data}
       />

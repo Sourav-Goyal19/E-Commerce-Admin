@@ -6,8 +6,12 @@ import { ProductForm } from "./components/product-form";
 import { ColorData, ColorModel } from "@/models/color.model";
 import { SizeData, SizeModel } from "@/models/size.model";
 import { CategoryData, CategoryModel } from "@/models/category.model";
+import {
+  ProductImageData,
+  ProductImageModel,
+} from "@/models/productImage.model";
 
-const BillboardFormPage = async ({
+const ProductFormPage = async ({
   params,
 }: {
   params: { productId: string; storeId: string };
@@ -15,6 +19,7 @@ const BillboardFormPage = async ({
   let colors: ColorData[] = [];
   let sizes: SizeData[] = [];
   let categories: CategoryData[] = [];
+  let productImages: ProductImageData[] = [];
 
   let product: ProductData = {
     _id: "",
@@ -23,16 +28,10 @@ const BillboardFormPage = async ({
     description: "",
     isFeatured: false,
     isArchived: false,
-    productImageId: "",
+    productImages: [],
     colorId: [],
     sizeId: [],
-    categoryId: {
-      _id: "",
-      name: "",
-      storeId: "",
-      billboardId: "",
-      createdAt: "",
-    },
+    categoryId: "",
     storeId: params.storeId,
     createdAt: "",
   };
@@ -46,10 +45,11 @@ const BillboardFormPage = async ({
   if (mongoose.Types.ObjectId.isValid(params.productId)) {
     const foundProduct = await ProductModel.findOne<ProductData>({
       _id: params.productId,
-    })
-      .populate("categoryId")
-      .populate("colorId")
-      .populate("sizeId");
+    }).sort({ createdAt: -1 });
+
+    productImages = await ProductImageModel.find({
+      productId: params.productId,
+    });
     console.log(foundProduct);
 
     if (foundProduct) {
@@ -60,10 +60,10 @@ const BillboardFormPage = async ({
         description: foundProduct.description,
         isFeatured: foundProduct.isFeatured,
         isArchived: foundProduct.isArchived,
-        productImageId: foundProduct.productImageId,
+        productImages: foundProduct.productImages,
         colorId: foundProduct.colorId,
         sizeId: foundProduct.sizeId,
-        categoryId: foundProduct.categoryId,
+        categoryId: foundProduct.categoryId as string,
         storeId: foundProduct.storeId,
         createdAt: format(foundProduct.createdAt, "MMMM do, yy"),
       };
@@ -79,6 +79,7 @@ const BillboardFormPage = async ({
             categories={categories}
             colors={colors}
             sizes={sizes}
+            productImages={productImages}
           />
         </div>
       </div>
@@ -87,4 +88,4 @@ const BillboardFormPage = async ({
   );
 };
 
-export default BillboardFormPage;
+export default ProductFormPage;
