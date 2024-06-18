@@ -47,7 +47,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ProductImageModal } from "./product-image-modal";
+import { ProductImageModal } from "./product-image-form";
 
 interface ProductFormProps {
   initialData: ProductData;

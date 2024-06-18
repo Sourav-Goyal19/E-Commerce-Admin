@@ -4,6 +4,7 @@ import { CategoryModel } from "@/models/category.model";
 import { StoreModel } from "@/models/store.model";
 import mongoose from "mongoose";
 import redis from "@/lib/redis";
+import { ProductModel } from "@/models/product.model";
 
 Connect();
 
@@ -175,6 +176,17 @@ export const DELETE = async (
   if (!mongoose.Types.ObjectId.isValid(categoryId)) {
     return NextResponse.json(
       { message: "Invalid Category ID" },
+      { status: 400 }
+    );
+  }
+
+  const products = await ProductModel.find({ categoryId });
+  if (products.length > 0) {
+    return NextResponse.json(
+      {
+        message:
+          "Make sure you removed all products using this category first.",
+      },
       { status: 400 }
     );
   }

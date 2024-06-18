@@ -70,7 +70,7 @@ const productSchema: Schema<Product> = new Schema(
     productImages: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "ProductImages",
+        ref: "Productimages",
       },
     ],
     categoryId: {

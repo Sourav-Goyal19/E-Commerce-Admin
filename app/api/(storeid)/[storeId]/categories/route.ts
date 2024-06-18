@@ -52,10 +52,8 @@ export const GET = async (
 
     await pipeline.exec();
 
-    const updatedCachedCategories = await redis.lrange(cacheKey, 0, -1);
-
     return NextResponse.json(
-      { message: "Categories Found", categories: updatedCachedCategories },
+      { message: "Categories Found", categories: categories },
       { status: 200 }
     );
   } catch (error) {

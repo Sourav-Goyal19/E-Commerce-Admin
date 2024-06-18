@@ -17,7 +17,7 @@ export interface ProductImageData {
   sizeId: string | mongoose.Schema.Types.ObjectId;
 }
 
-const ProductImagesSchema: Schema<ProductImages> = new Schema(
+const ProductImageSchema: Schema<ProductImages> = new Schema(
   {
     imageUrls: [
       {
@@ -48,5 +48,5 @@ const ProductImagesSchema: Schema<ProductImages> = new Schema(
 );
 
 export const ProductImageModel =
-  (models.ProductImages as mongoose.Model<ProductImages>) ||
-  model<ProductImages>("ProductImages", ProductImagesSchema);
+  (models.Productimages as mongoose.Model<ProductImages>) ||
+  model<ProductImages>("Productimages", ProductImageSchema);

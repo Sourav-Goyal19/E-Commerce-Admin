@@ -22,10 +22,8 @@ export const GET = async (
   try {
     const cacheKey = getBillboardCacheKey(billboardId);
     const cachedBillboard = await redis.get(cacheKey);
-    console.log("Cached:", cachedBillboard);
 
     if (cachedBillboard) {
-      console.log(cachedBillboard);
       return NextResponse.json({
         message: "Billboard found (from redis)",
         billboard: cachedBillboard,

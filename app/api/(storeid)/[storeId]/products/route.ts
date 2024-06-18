@@ -38,9 +38,11 @@ export const GET = async (
       );
     }
 
-    const products = await ProductModel.find({ storeId }).sort({
-      createdAt: -1,
-    });
+    const products = await ProductModel.find({ storeId })
+      .populate("productImages")
+      .sort({
+        createdAt: -1,
+      });
 
     products.forEach(async (product) => {
       await redis.lpush(productsCacheKey, JSON.stringify(product));
