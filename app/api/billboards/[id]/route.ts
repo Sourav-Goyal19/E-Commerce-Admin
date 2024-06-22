@@ -4,6 +4,7 @@ import { StoreModel } from "@/models/store.model";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import redis from "@/lib/redis";
+import { CategoryModel } from "@/models/category.model";
 
 Connect();
 
@@ -158,6 +159,17 @@ export const DELETE = async (
   }
 
   try {
+    const categories = await CategoryModel.find({ billboardId });
+    if (categories.length > 0) {
+      return NextResponse.json(
+        {
+          message:
+            "Make sure you removed all categories using this billboard first.",
+        },
+        { status: 400 }
+      );
+    }
+
     const deletedBillboard =
       await BillboardModel.findByIdAndDelete(billboardId);
 

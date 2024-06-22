@@ -27,6 +27,9 @@ import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import SelectSize from "./select-size";
+import { MultiValue } from "react-select";
+import toast from "react-hot-toast";
 
 interface ProductImageModalProps {
   title: string;
@@ -47,7 +50,7 @@ interface ProductImageModalProps {
 
 const formSchema = z.object({
   images: z.string().array().min(1, "Atleast one image is required"),
-  sizeId: z.string().min(1, "Size is required"),
+  sizeId: z.string().array().min(1, "Size is required"),
   colorId: z.string().min(1, "Color is required"),
 });
 
@@ -71,7 +74,7 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       images: productImage?._id ? productImage.imageUrls : [],
-      sizeId: productImage?._id && productImage.sizeId.toString(),
+      sizeId: productImage?._id ? (productImage.sizeId as string[]) : [],
       colorId: productImage?._id && productImage.colorId.toString(),
     },
   });
@@ -80,13 +83,13 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
     if (productImage) {
       form.reset({
         images: productImage.imageUrls,
-        sizeId: productImage.sizeId.toString(),
+        sizeId: productImage.sizeId as string[],
         colorId: productImage.colorId.toString(),
       });
     } else {
       form.reset({
         images: [],
-        sizeId: "",
+        sizeId: [],
         colorId: "",
       });
     }
@@ -136,10 +139,13 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
             ...prev,
             productImage.colorId.toString(),
           ]);
-          setSelectedSize((prev) => [...prev, productImage.sizeId.toString()]);
+          setSelectedSize((prev) => [
+            ...prev,
+            ...(productImage.sizeId as string[]),
+          ]);
           form.reset({
             images: [],
-            sizeId: "",
+            sizeId: [],
             colorId: "",
           });
         })
@@ -176,16 +182,17 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
           ]);
           form.reset({
             images: [],
-            sizeId: "",
+            sizeId: [],
             colorId: "",
           });
+          onClose();
         })
         .catch((err) => {
           console.log(err);
+          toast.error("Something went wrong");
         })
         .finally(() => {
           setLoading(false);
-          onClose();
         });
     }
   };
@@ -232,25 +239,19 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Size</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value == "" ? undefined : field.value}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a Size" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sizes.length > 0 &&
-                        sizes.map((size) => (
-                          <SelectItem key={size._id} value={size._id}>
-                            {size.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SelectSize
+                      options={sizes}
+                      onChange={(value: MultiValue<SizeData>) => {
+                        field.onChange(value.map((item) => item._id));
+                      }}
+                      value={sizes.filter((size) =>
+                        field.value.includes(size._id)
+                      )}
+                      disabled={loading}
+                      label="Select Size"
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />

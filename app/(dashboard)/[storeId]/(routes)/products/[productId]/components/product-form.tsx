@@ -134,6 +134,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const onSubmit = (data: ProductFormValues) => {
     setLoading(true);
     console.log(data);
+    console.log(selectedColorWithImages);
     if (selectedColorWithImages.length <= 0) {
       setLoading(false);
       return toast.error("Product Images are required");
@@ -442,9 +443,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <TableCell>
                   {colors.find((color) => color._id == image.colorId)?.name}
                 </TableCell>
-                <TableCell>
-                  {sizes.find((size) => size._id == image.sizeId)?.name}
-                </TableCell>
+                <TableCell>{image.sizeId.length}</TableCell>
                 <TableCell>
                   <CellAction
                     productImageId={image._id.toString()}

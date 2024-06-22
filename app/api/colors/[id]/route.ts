@@ -4,6 +4,7 @@ import { StoreModel } from "@/models/store.model";
 import mongoose from "mongoose";
 import redis from "@/lib/redis";
 import { ColorModel } from "@/models/color.model";
+import { ProductModel } from "@/models/product.model";
 
 Connect();
 
@@ -161,6 +162,16 @@ export const DELETE = async (
   }
 
   try {
+    const products = await ProductModel.find({ colorId });
+    if (products.length > 0) {
+      return NextResponse.json(
+        {
+          message: "Make sure you removed all products using this color first.",
+        },
+        { status: 400 }
+      );
+    }
+
     const deletedColor = await ColorModel.findByIdAndDelete(colorId);
 
     if (!deletedColor) {

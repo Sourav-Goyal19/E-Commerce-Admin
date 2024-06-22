@@ -37,7 +37,8 @@ export const GET = async (
       );
     }
 
-    const category = await CategoryModel.findById(categoryId);
+    const category =
+      await CategoryModel.findById(categoryId).populate("billboardId");
     await redis.set(cacheKey, JSON.stringify(category), { ex: 60 * 60 * 24 });
 
     return NextResponse.json(

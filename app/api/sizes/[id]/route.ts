@@ -4,6 +4,7 @@ import { StoreModel } from "@/models/store.model";
 import { SizeModel } from "@/models/size.model";
 import mongoose from "mongoose";
 import redis from "@/lib/redis";
+import { ProductModel } from "@/models/product.model";
 
 Connect();
 
@@ -159,6 +160,16 @@ export const DELETE = async (
   }
 
   try {
+    const products = await ProductModel.find({ sizeId });
+    if (products.length > 0) {
+      return NextResponse.json(
+        {
+          message: "Make sure you removed all products using this size first.",
+        },
+        { status: 400 }
+      );
+    }
+
     const deletedsize = await SizeModel.findByIdAndDelete(sizeId);
 
     if (!deletedsize) {

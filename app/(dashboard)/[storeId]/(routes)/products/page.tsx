@@ -12,7 +12,9 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
   if (mongoose.Types.ObjectId.isValid(params.storeId)) {
     const products = await ProductModel.find<ProductData>({
       storeId: params.storeId,
-    }).populate("categoryId");
+    })
+      .populate("categoryId")
+      .sort({ createdAt: -1 });
 
     products.forEach((product) => {
       formattedProducts.push({

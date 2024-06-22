@@ -81,9 +81,6 @@ export const POST = async (
   if (!mongoose.Types.ObjectId.isValid(colorId)) {
     return NextResponse.json({ message: "Invalid color ID" }, { status: 400 });
   }
-  if (!mongoose.Types.ObjectId.isValid(sizeId)) {
-    return NextResponse.json({ message: "Invalid size ID" }, { status: 400 });
-  }
 
   try {
     const productImage = await ProductImageModel.create({
@@ -135,9 +132,6 @@ export const PATCH = async (
   }
   if (colorId && !mongoose.Types.ObjectId.isValid(colorId)) {
     return NextResponse.json({ message: "Invalid color ID" }, { status: 400 });
-  }
-  if (sizeId && !mongoose.Types.ObjectId.isValid(sizeId)) {
-    return NextResponse.json({ message: "Invalid size ID" }, { status: 400 });
   }
 
   try {

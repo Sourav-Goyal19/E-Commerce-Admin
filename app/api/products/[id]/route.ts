@@ -28,27 +28,33 @@ export const GET = async (
   try {
     const productCacheKey = getProductCachekey(productId);
     const productCache = await redis.get(productCacheKey);
+    // if (productCache) {
+    //   return NextResponse.json(
+    //     {
+    //       message: "Product Found (from redis)",
+    //       product: productCache,
+    //     },
+    //     { status: 200 }
+    //   );
+    // }
 
-    if (productCache) {
-      return NextResponse.json(
-        {
-          message: "Product Found (from redis)",
-          product: productCache,
-        },
-        { status: 200 }
-      );
-    }
-
-    const product = await ProductModel.findById(productId);
+    const product = await ProductModel.findById(productId)
+      .populate({
+        path: "productImages",
+        populate: [{ path: "colorId" }, { path: "sizeId" }],
+      })
+      .populate("categoryId")
+      .populate("sizeId")
+      .populate("colorId");
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    const pipeline = redis.pipeline();
-    pipeline.set(productCacheKey, JSON.stringify(product));
-    pipeline.expire(productCacheKey, 3600 * 24 * 7);
-    await pipeline.exec();
+    // const pipeline = redis.pipeline();
+    // pipeline.set(productCacheKey, JSON.stringify(product));
+    // pipeline.expire(productCacheKey, 3600 * 24 * 7);
+    // await pipeline.exec();
 
     return NextResponse.json(
       {
@@ -317,6 +323,15 @@ export const PATCH = async (
       );
     }
 
+    const updatedProductId = updatedProject._id;
+    await Promise.all(
+      productImages.map(async (imageId: string) => {
+        await ProductImageModel.findByIdAndUpdate(imageId, {
+          productId: updatedProductId,
+        });
+      })
+    );
+
     await redis.del(productCacheKey);
     await redis.del(`products:${updatedProject.storeId}`);
 
@@ -359,6 +374,8 @@ export const DELETE = async (
         { status: 404 }
       );
     }
+
+    await ProductImageModel.deleteMany({ productId: deletedProduct._id });
 
     await redis.del(productCacheKey);
     await redis.del(`products:${deletedProduct.storeId}`);
