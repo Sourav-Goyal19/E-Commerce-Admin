@@ -438,7 +438,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           </TableHeader>
           <TableBody>
             {selectedColorWithImages.map((image) => (
-              <TableRow>
+              <TableRow key={image._id}>
                 <TableCell>{image.imageUrls.length}</TableCell>
                 <TableCell>
                   {colors.find((color) => color._id == image.colorId)?.name}
