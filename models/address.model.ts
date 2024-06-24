@@ -3,10 +3,13 @@ import { CustomerData } from "./customer.model";
 
 interface Address extends Document {
   _id: string;
+  name: string;
+  email: string;
   street: string;
   city: string;
-  country: string;
-  zip: string;
+  state: string;
+  nearby?: string;
+  pincode: string;
   phone: string;
   customerId: string | mongoose.Schema.Types.ObjectId | CustomerData;
   createdAt: Date;
@@ -14,10 +17,13 @@ interface Address extends Document {
 
 export interface AddressData {
   _id: string;
+  name: string;
+  email: string;
   street: string;
   city: string;
-  country: string;
-  zip: string;
+  pincode: string;
+  state: string;
+  nearby?: string;
   phone: string;
   customerId: string | mongoose.Schema.Types.ObjectId | CustomerData;
   createdAt: string;
@@ -25,6 +31,13 @@ export interface AddressData {
 
 const addressSchema: Schema<Address> = new Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+    },
     street: {
       type: String,
       required: true,
@@ -33,11 +46,11 @@ const addressSchema: Schema<Address> = new Schema(
       type: String,
       required: true,
     },
-    country: {
+    state: {
       type: String,
-      default: "India",
+      required: true,
     },
-    zip: {
+    pincode: {
       type: String,
       required: true,
     },

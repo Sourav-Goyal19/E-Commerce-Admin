@@ -2,6 +2,7 @@ import { Connect } from "@/dbConfig/connect";
 import { CustomerModel } from "@/models/customer.model";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
+import { CartModel } from "@/models/cart.model";
 
 Connect();
 
@@ -75,6 +76,7 @@ export const POST = async (request: NextRequest) => {
       salt,
     });
     const savedCustomer = await newCustomer.save();
+    await CartModel.create({ customerId: savedCustomer._id, products: [] });
 
     // const smsResponse = SendSMS({
     //   phone_number: phone,

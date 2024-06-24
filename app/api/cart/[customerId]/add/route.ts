@@ -2,8 +2,11 @@ import mongoose from "mongoose";
 import { Connect } from "@/dbConfig/connect";
 import { CartModel } from "@/models/cart.model";
 import { NextRequest, NextResponse } from "next/server";
+import redis from "@/lib/redis";
 
 Connect();
+
+const getCartKey = (cartId: string) => `cart-${cartId}`;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin":
@@ -78,10 +81,11 @@ export const POST = async (
     let cart = await CartModel.findOne({ customerId });
 
     if (!cart) {
-      cart = await CartModel.create({
-        customerId,
-        products: [{ productId, colorId, sizeId, quantity }],
-      });
+      cart = await CartModel.create({ customerId });
+    }
+
+    if (cart?.products.length <= 0) {
+      cart?.products.push({ productId, colorId, sizeId, quantity });
     } else {
       const productIndex = cart.products.findIndex(
         (product) =>
@@ -95,13 +99,15 @@ export const POST = async (
       } else {
         cart.products.push({ productId, colorId, sizeId, quantity });
       }
-
-      await cart.save();
     }
+    await cart.save();
 
     await cart.populate({
       path: "products.productId products.colorId products.sizeId",
     });
+
+    const cartCacheKey = getCartKey(cart._id.toString());
+    await redis.del(cartCacheKey);
 
     return NextResponse.json(
       {

@@ -2,8 +2,11 @@ import mongoose from "mongoose";
 import { Connect } from "@/dbConfig/connect";
 import { CartModel } from "@/models/cart.model";
 import { NextRequest, NextResponse } from "next/server";
+import redis from "@/lib/redis";
 
 Connect();
+
+const getCartCacheKey = (cartId: string) => `cart-${cartId}`;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin":
@@ -35,15 +38,26 @@ export const PATCH = async (
       { customerId },
       {
         products: [],
-      }
+      },
+      { new: true }
     );
+
+    if (!updatedCart) {
+      return NextResponse.json(
+        { message: "Cart not found" },
+        { status: 404, headers: corsHeaders }
+      );
+    }
+
+    const cartCacheKey = getCartCacheKey(updatedCart?._id);
+    await redis.del(cartCacheKey);
 
     return NextResponse.json(
       { message: "All Items removed from the cart", updatedCart },
       { status: 200, headers: corsHeaders }
     );
   } catch (error) {
-    console.log("CART[PATCH]:", error);
+    console.error("CART-REMOVEALL[PATCH]:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500, headers: corsHeaders }

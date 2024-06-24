@@ -29,10 +29,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const customer: CustomerData = await CustomerModel.findById(customerId)
+    const customer: CustomerData | null = await CustomerModel.findById(
+      customerId
+    )
       .select("-hashedPassword")
       .select("-salt")
-      .select("-__v");
+      .select("-__v")
+      .populate("address");
     // console.log(user);
     if (!customer) {
       return NextResponse.json(
