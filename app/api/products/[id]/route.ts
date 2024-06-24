@@ -4,6 +4,7 @@ import redis from "@/lib/redis";
 import mongoose from "mongoose";
 import { ProductModel } from "@/models/product.model";
 import { ProductImageModel } from "@/models/productImage.model";
+import { StoreModel } from "@/models/store.model";
 
 Connect();
 
@@ -184,6 +185,9 @@ export const POST = async (
         await ProductImageModel.findByIdAndUpdate(imageId, { productId });
       })
     );
+    await StoreModel.findByIdAndUpdate(storeId, {
+      $push: { products: productId },
+    });
 
     await redis.del(`products:${storeId}`);
 
@@ -376,7 +380,9 @@ export const DELETE = async (
     }
 
     await ProductImageModel.deleteMany({ productId: deletedProduct._id });
-
+    await StoreModel.findByIdAndUpdate(deletedProduct.storeId, {
+      $pull: { products: deletedProduct._id },
+    });
     await redis.del(productCacheKey);
     await redis.del(`products:${deletedProduct.storeId}`);
 
