@@ -15,6 +15,7 @@ const SizesFormPage = async ({
     value: "",
     storeId: params.storeId,
     createdAt: "",
+    colorId: "",
   };
 
   if (mongoose.Types.ObjectId.isValid(params.sizeId)) {
@@ -28,6 +29,7 @@ const SizesFormPage = async ({
         name: foundSize.name,
         value: foundSize.value,
         storeId: foundSize.storeId,
+        colorId: foundSize.colorId,
         createdAt: format(foundSize.createdAt, "MMMM do, yyyy"),
       };
     }
