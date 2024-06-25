@@ -142,7 +142,7 @@ export const PATCH = async (
       categoryId,
       {
         name,
-        categoryId,
+        billboardId,
       },
       { new: true }
     );

@@ -62,6 +62,8 @@ export const GET = async (
     }
     query.$and.push({ productImages: { $in: productImageIds } });
 
+    console.log(query);
+
     const products = await ProductModel.find(query)
       .populate("productImages")
       .populate("colorId")
@@ -77,6 +79,8 @@ export const GET = async (
         { status: 404 }
       );
     }
+
+    console.log(products);
 
     return NextResponse.json(
       {
