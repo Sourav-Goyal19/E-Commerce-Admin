@@ -31,9 +31,11 @@ export async function GET(
   }
 
   try {
-    const cart = await CartModel.findOne({ customerId }).populate({
-      path: "products.productId products.colorId products.sizeId",
-    });
+    const cart = await CartModel.findOne({ customerId })
+      .populate({
+        path: "products.productId products.colorId products.sizeId",
+      })
+      .sort({ createdAt: -1 });
 
     if (!cart) {
       return NextResponse.json(

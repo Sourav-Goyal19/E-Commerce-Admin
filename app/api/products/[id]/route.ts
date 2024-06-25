@@ -29,15 +29,15 @@ export const GET = async (
   try {
     const productCacheKey = getProductCachekey(productId);
     const productCache = await redis.get(productCacheKey);
-    // if (productCache) {
-    //   return NextResponse.json(
-    //     {
-    //       message: "Product Found (from redis)",
-    //       product: productCache,
-    //     },
-    //     { status: 200 }
-    //   );
-    // }
+    if (productCache) {
+      return NextResponse.json(
+        {
+          message: "Product Found (from redis)",
+          product: productCache,
+        },
+        { status: 200 }
+      );
+    }
 
     const product = await ProductModel.findById(productId)
       .populate({
@@ -52,10 +52,10 @@ export const GET = async (
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // const pipeline = redis.pipeline();
-    // pipeline.set(productCacheKey, JSON.stringify(product));
-    // pipeline.expire(productCacheKey, 3600 * 24 * 7);
-    // await pipeline.exec();
+    const pipeline = redis.pipeline();
+    pipeline.set(productCacheKey, JSON.stringify(product));
+    pipeline.expire(productCacheKey, 3600 * 24 * 7);
+    await pipeline.exec();
 
     return NextResponse.json(
       {
