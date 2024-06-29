@@ -5,10 +5,12 @@ import mongoose from "mongoose";
 import { ProductModel } from "@/models/product.model";
 import { ProductImageModel } from "@/models/productImage.model";
 import { StoreModel } from "@/models/store.model";
+import { CartModel } from "@/models/cart.model";
 
 Connect();
 
 const getProductCachekey = (productId: string) => `product:${productId}`;
+const getCartKey = (cartId: string) => `cart-${cartId}`;
 
 export const GET = async (
   req: NextRequest,
@@ -370,7 +372,18 @@ export const DELETE = async (
   try {
     const productCacheKey = getProductCachekey(productId);
 
-    const deletedProduct = await ProductModel.findByIdAndDelete(productId);
+    const [deletedProduct, productImageResult, cartResult] = await Promise.all([
+      ProductModel.findByIdAndDelete(productId),
+      ProductImageModel.deleteMany({ productId }),
+      CartModel.updateMany(
+        { "products.productId": productId },
+        [
+          { $pull: { products: { productId } } },
+          { $set: { quantity: { $sum: "$products.quantity" } } },
+        ],
+        { new: true }
+      ),
+    ]);
 
     if (!deletedProduct) {
       return NextResponse.json(
@@ -379,12 +392,21 @@ export const DELETE = async (
       );
     }
 
-    await ProductImageModel.deleteMany({ productId: deletedProduct._id });
-    await StoreModel.findByIdAndUpdate(deletedProduct.storeId, {
-      $pull: { products: deletedProduct._id },
+    const [updatedStore, updatedCartIds] = await Promise.all([
+      StoreModel.findByIdAndUpdate(deletedProduct.storeId, {
+        $pull: { products: deletedProduct._id },
+      }),
+      CartModel.find({ "products.productId": productId }, "_id"),
+    ]);
+
+    const redisMulti = redis.multi();
+    redisMulti.del(productCacheKey);
+    redisMulti.del(`products:${deletedProduct.storeId}`);
+    updatedCartIds.forEach((cart) => {
+      redisMulti.del(getCartKey(cart._id.toString()));
     });
-    await redis.del(productCacheKey);
-    await redis.del(`products:${deletedProduct.storeId}`);
+
+    await redisMulti.exec();
 
     return NextResponse.json(
       {
