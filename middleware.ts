@@ -12,7 +12,9 @@ export function middleware(request: NextRequest) {
     pathname == "/forgotpassword";
 
   const token = request.cookies.get("token");
-  const nextAuthToken = request.cookies.get("next-auth.session-token");
+  const nextAuthToken =
+    request.cookies.get("next-auth.session-token") ||
+    request.cookies.get("__Secure-next-auth.session-token");
 
   if (isPublicPath && token) {
     return NextResponse.redirect(new URL("/home", request.url));
