@@ -1,9 +1,21 @@
 import { Connect } from "@/dbConfig/connect";
-import UserModel from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import { CustomerModel } from "@/models/customer.model";
+
 Connect();
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin":
+    process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3001",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Credentials": "true",
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,14 +33,20 @@ export async function POST(req: NextRequest) {
     );
     console.log(updatedCustomer);
     if (!updatedCustomer) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "User not found" },
+        { status: 404, headers: corsHeaders }
+      );
     }
 
     return NextResponse.json(
       { message: "Password updated successfully" },
-      { status: 200 }
+      { status: 200, headers: corsHeaders }
     );
   } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    return NextResponse.json(
+      { message: error.message },
+      { status: 500, headers: corsHeaders }
+    );
   }
 }

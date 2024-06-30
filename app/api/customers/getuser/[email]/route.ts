@@ -8,6 +8,18 @@ interface IParams {
   email: string;
 }
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin":
+    process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3001",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Credentials": "true",
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: IParams }
@@ -18,7 +30,10 @@ export async function GET(
     .select("-provider");
 
   if (!user) {
-    return NextResponse.json({ message: "User not found" }, { status: 404 });
+    return NextResponse.json(
+      { message: "User not found" },
+      { status: 404, headers: corsHeaders }
+    );
   }
   return NextResponse.json(
     {
@@ -26,6 +41,6 @@ export async function GET(
       success: true,
       user,
     },
-    { status: 200 }
+    { status: 200, headers: corsHeaders }
   );
 }
