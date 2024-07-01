@@ -52,15 +52,6 @@ export async function POST(request: NextRequest) {
     //   );
     // }
 
-    const response = NextResponse.json(
-      {
-        message: "Login successful",
-        success: true,
-        customer,
-      },
-      { status: 200, headers: corsHeaders }
-    );
-
     const jwtUser = {
       id: customer._id,
       phone: customer.phone,
@@ -74,8 +65,22 @@ export async function POST(request: NextRequest) {
 
     console.log(token);
 
+    const response = NextResponse.json(
+      {
+        message: "Login successful",
+        success: true,
+        customer,
+        token,
+      },
+      { status: 200, headers: corsHeaders }
+    );
+
     response.cookies.set("token", token, {
       httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      domain: ".amplifyapp.com",
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
     });
 

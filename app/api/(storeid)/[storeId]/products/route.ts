@@ -35,7 +35,7 @@ export const GET = async (
     return NextResponse.json({ message: "Invalid store id" }, { status: 400 });
   }
 
-  const queryConditions: any[] = [{ storeId }];
+  const queryConditions: any[] = [{ storeId }, { isArchived: false }];
 
   if (categoryId) queryConditions.push({ categoryId });
   if (isFeatured) queryConditions.push({ isFeatured: true });
