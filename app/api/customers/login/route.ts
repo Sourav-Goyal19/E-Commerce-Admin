@@ -70,7 +70,6 @@ export async function POST(request: NextRequest) {
         message: "Login successful",
         success: true,
         customer,
-        token,
       },
       { status: 200, headers: corsHeaders }
     );
@@ -80,7 +79,6 @@ export async function POST(request: NextRequest) {
       secure: true,
       sameSite: "none",
       path: "/",
-      domain: ".amplifyapp.com",
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
     });
 
