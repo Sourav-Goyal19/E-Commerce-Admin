@@ -27,9 +27,9 @@ const Dashboard = async ({ params }: { params: { storeId: string } }) => {
         <div className="flex-1 space-y-4 p-8 pt-6">
           <Heading title="Dashboard" description="Overview of your store" />
           <Separator />
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <Card>
-              <CardHeader className="flex sm:flex-row items-center justify-between space-y-4">
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-sm font-medium text-center truncate">
                   Total Revenuce
                 </CardTitle>
@@ -42,7 +42,7 @@ const Dashboard = async ({ params }: { params: { storeId: string } }) => {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader className="flex sm:flex-row items-center justify-between space-y-4">
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-sm font-medium text-center truncate">
                   Sales
                 </CardTitle>
@@ -53,7 +53,7 @@ const Dashboard = async ({ params }: { params: { storeId: string } }) => {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader className="flex sm:flex-row items-center justify-between space-y-4">
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-sm font-medium text-center truncate">
                   Product in stock
                 </CardTitle>

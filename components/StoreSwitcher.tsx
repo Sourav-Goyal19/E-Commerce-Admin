@@ -62,7 +62,7 @@ const StoreSwitcher: React.FC<StoreSwitcherProps> = ({ items = [] }) => {
               aria-expanded={isOpen}
               aria-controls="stores"
               aria-label="Select a store"
-              className="w-[150px] md:w-[200px] justify-between"
+              className="w-[200px] justify-between"
             >
               <StoreIcon className="mr-2 h-4 w-4" />
               <span className="capitalize truncate">

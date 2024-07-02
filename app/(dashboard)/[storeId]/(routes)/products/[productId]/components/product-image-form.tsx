@@ -203,7 +203,7 @@ export const ProductImageModal: React.FC<ProductImageModalProps> = ({
       <Separator className="mt-2" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 py-4">
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <FormField
               control={form.control}
               name="colorId"

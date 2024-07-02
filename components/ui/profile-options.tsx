@@ -4,6 +4,9 @@ import Avatar from "@/components/ui/avatar";
 import { UserData } from "@/models/user.model";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface ProfileOptionsProps {
   user: UserData | null;
@@ -12,6 +15,7 @@ interface ProfileOptionsProps {
 export const ProfileOptions: React.FC<ProfileOptionsProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -20,6 +24,19 @@ export const ProfileOptions: React.FC<ProfileOptionsProps> = ({ user }) => {
     ) {
       setIsOpen(false);
     }
+  };
+
+  const handleLogout = () => {
+    axios
+      .get("/api/users/logout")
+      .then((res) => {
+        router.push("/");
+        toast.success("Logout Succesfully");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Something went wrong");
+      });
   };
 
   useEffect(() => {
@@ -44,7 +61,10 @@ export const ProfileOptions: React.FC<ProfileOptionsProps> = ({ user }) => {
             : "opacity-0 translate-y-2 pointer-events-none"
         )}
       >
-        <p className="text-base transition flex items-center cursor-pointer hover:bg-muted rounded-lg py-2 px-2">
+        <p
+          // onClick={handleLogout}
+          className="text-base transition flex items-center cursor-pointer hover:bg-muted rounded-lg py-2 px-2"
+        >
           <LogOut className="mr-2 h-5 w-5" /> Logout
         </p>
       </div>

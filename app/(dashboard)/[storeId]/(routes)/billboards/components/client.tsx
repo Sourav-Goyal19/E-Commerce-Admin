@@ -20,7 +20,7 @@ export const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
   const params = useParams();
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between gap-4 sm:items-center">
         <Heading
           title={`Billboards (${data?.length || 0})`}
           description="Manage Billboards for your store"
