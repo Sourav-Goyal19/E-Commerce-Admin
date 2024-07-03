@@ -39,7 +39,7 @@ export const POST = async (request: NextRequest) => {
 
     if (phone.length !== 10) {
       return NextResponse.json(
-        { message: "Phone number should be 10 digits" },
+        { message: "Phone number should be of 10 digits" },
         { status: 400, headers: corsHeaders }
       );
     }
