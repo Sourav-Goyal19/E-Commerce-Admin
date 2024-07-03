@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Connect } from "@/dbConfig/connect";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 import { CustomerData, CustomerModel } from "@/models/customer.model";
+import { CartModel } from "@/models/cart.model";
 
 Connect();
 
@@ -43,10 +44,18 @@ export async function GET(req: NextRequest) {
         { status: 404, headers: corsHeaders }
       );
     }
+
+    const cart = await CartModel.findOne({ customerId: customer._id })
+      .populate({
+        path: "products.productId products.colorId products.sizeId",
+      })
+      .sort({ createdAt: -1 });
+
     return NextResponse.json(
       {
         message: "User Found",
         customer,
+        cart,
       },
       { status: 200, headers: corsHeaders }
     );

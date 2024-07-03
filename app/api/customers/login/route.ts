@@ -3,6 +3,7 @@ import { Connect } from "@/dbConfig/connect";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { CustomerData, CustomerModel } from "@/models/customer.model";
+import { CartModel } from "@/models/cart.model";
 
 Connect();
 
@@ -45,12 +46,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const cart = await CartModel.findOne({ customerId: customer._id })
+      .populate({
+        path: "products.productId products.colorId products.sizeId",
+      })
+      .sort({ createdAt: -1 });
+
     // if (!customer.isVerified) {
     //   return NextResponse.json(
     //     { message: "Phone number is not verified" },
     //     { status: 401, headers: corsHeaders }
     //   );
     // }
+
+    console.log(cart);
 
     const jwtUser = {
       id: customer._id,
@@ -70,6 +79,7 @@ export async function POST(request: NextRequest) {
         message: "Login successful",
         success: true,
         customer,
+        cart,
       },
       { status: 200, headers: corsHeaders }
     );
@@ -78,14 +88,13 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      path: "/",
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     return response;
   } catch (error: any) {
-    NextResponse.json(
-      { message: error.message },
+    return NextResponse.json(
+      { message: error.message || "Internal Server Error" },
       { status: 500, headers: corsHeaders }
     );
   }

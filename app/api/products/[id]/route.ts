@@ -372,17 +372,9 @@ export const DELETE = async (
   try {
     const productCacheKey = getProductCachekey(productId);
 
-    const [deletedProduct, productImageResult, cartResult] = await Promise.all([
+    const [deletedProduct, productImageResult] = await Promise.all([
       ProductModel.findByIdAndDelete(productId),
       ProductImageModel.deleteMany({ productId }),
-      CartModel.updateMany(
-        { "products.productId": productId },
-        [
-          { $pull: { products: { productId } } },
-          { $set: { quantity: { $sum: "$products.quantity" } } },
-        ],
-        { new: true }
-      ),
     ]);
 
     if (!deletedProduct) {
@@ -391,6 +383,11 @@ export const DELETE = async (
         { status: 404 }
       );
     }
+
+    await CartModel.updateMany(
+      { "products.productId": productId },
+      { $pull: { products: { productId } } }
+    );
 
     const [updatedStore, updatedCartIds] = await Promise.all([
       StoreModel.findByIdAndUpdate(deletedProduct.storeId, {

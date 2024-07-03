@@ -6,19 +6,12 @@ import mongoose from "mongoose";
 
 Connect();
 
-const getProductsCacheKey = (storeId: string, queryObj: any) => {
-  const queryStr = Object.keys(queryObj)
-    .map((key) => `${key}:${queryObj[key]}`)
-    .join(":");
-  return `products:${storeId}:${queryStr}`;
-};
-
 export const GET = async (
   req: NextRequest,
   { params }: { params: { storeId: string } }
 ) => {
   const storeId = params.storeId;
-  const searchParams = req.nextUrl.searchParams;
+  const { searchParams } = req.nextUrl;
   const categoryId = searchParams.get("categoryId");
   const sizeId = searchParams.get("sizeId");
   const colorId = searchParams.get("colorId");
@@ -35,62 +28,57 @@ export const GET = async (
     return NextResponse.json({ message: "Invalid store id" }, { status: 400 });
   }
 
-  const queryConditions: any[] = [{ storeId }, { isArchived: false }];
+  const query: any = {
+    storeId,
+    isArchived: false,
+  };
 
-  if (categoryId) queryConditions.push({ categoryId });
-  if (isFeatured) queryConditions.push({ isFeatured: true });
-
-  const query: any = { $and: queryConditions };
-
-  const productImageQuery: any = {};
-  if (colorId && sizeId) {
-    productImageQuery.$and = [{ colorId }, { sizeId }];
-  } else {
-    if (colorId) productImageQuery.colorId = colorId;
-    if (sizeId) productImageQuery.sizeId = sizeId;
-  }
+  if (categoryId) query.categoryId = categoryId;
+  if (isFeatured) query.isFeatured = true;
 
   try {
-    const productImages = await ProductImageModel.find(productImageQuery);
-    const productImageIds = productImages.map((image) => image._id);
+    let productImageIds: mongoose.Types.ObjectId[] = [];
 
-    if (productImageIds.length === 0) {
-      return NextResponse.json(
-        { message: "No products found" },
-        { status: 404 }
-      );
+    if (colorId || sizeId) {
+      const productImageQuery: any = {};
+      if (colorId) productImageQuery.colorId = colorId;
+      if (sizeId) productImageQuery.sizeId = sizeId;
+
+      const productImages = await ProductImageModel.find(productImageQuery);
+      productImageIds = productImages.map((image) => image._id);
+
+      if (productImageIds.length === 0) {
+        return NextResponse.json(
+          { message: "No products found" },
+          { status: 404 }
+        );
+      }
     }
-    query.$and.push({ productImages: { $in: productImageIds } });
 
-    console.log(query);
+    if (productImageIds.length > 0) {
+      query.productImages = { $in: productImageIds };
+    }
 
     const products = await ProductModel.find(query)
       .populate("productImages")
       .populate("colorId")
       .populate("sizeId")
       .populate("categoryId")
-      .sort({
-        createdAt: -1,
-      });
+      .sort({ createdAt: -1 });
 
-    if (products.length <= 0) {
+    if (products.length === 0) {
       return NextResponse.json(
         { message: "No products found" },
         { status: 404 }
       );
     }
 
-    console.log(products);
-
     return NextResponse.json(
-      {
-        message: "Products found",
-        products: products,
-      },
+      { message: "Products found", products },
       { status: 200 }
     );
   } catch (error) {
-    console.log("PRODUCTS[GET]:", error);
+    console.error("PRODUCTS[GET]:", error);
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }
