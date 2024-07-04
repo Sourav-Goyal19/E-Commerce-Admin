@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const customer: CustomerData | null = await CustomerModel.findOne({
       phone,
-    }).populate("address");
+    });
 
     if (!customer) {
       return NextResponse.json(
