@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       { expiresIn: "1d" }
     );
 
-    console.log(token);
+    // console.log(token);
 
     const response = NextResponse.json(
       {
@@ -80,13 +80,14 @@ export async function POST(request: NextRequest) {
         success: true,
         customer,
         cart,
+        token,
       },
       { status: 200, headers: corsHeaders }
     );
 
-    response.cookies.set("token", token, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    // response.cookies.set("token", token, {
+    //   maxAge: 30 * 24 * 60 * 60 * 1000,
+    // });
 
     return response;
   } catch (error: any) {
