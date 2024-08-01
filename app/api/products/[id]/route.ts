@@ -167,6 +167,8 @@ export const POST = async (
     );
   }
 
+  const productImageIds = productImages.map((image: any) => image._id);
+
   try {
     const product = await ProductModel.create({
       name,
@@ -178,7 +180,7 @@ export const POST = async (
       colorId,
       categoryId,
       storeId,
-      productImageId: productImages,
+      productImages: productImageIds,
     });
 
     const productId = product._id;
