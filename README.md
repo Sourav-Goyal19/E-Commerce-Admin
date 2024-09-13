@@ -53,7 +53,6 @@ Here are a few screenshots of the admin panel:
 ![Dashboard Screenshot](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221727/admin/udjqqe1zbtdbutdrffcu.png)
 ![Billboard Management](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221727/admin/z8kqbvdcp08kb0a5vmlb.png)
 ![Products Page](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221726/admin/bxe1jq3jvu4plo7kzspd.png)
-![Inventory Report](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221709/admin/a8n6bxwflo6rtionxntz.png)
 ![Orders Report](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221709/admin/jyy1jrpczrsubwmeenpb.png)
 
 ---
