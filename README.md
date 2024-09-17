@@ -13,6 +13,7 @@ This is the e-commerce admin panel that allows administrators to manage their av
 - 🎨 **Colors Management**: Add and manage multiple available colors for products.
 - 🛍️ **Products Management**: Add, update, and manage multiple products with advanced options for each.
 - 📑 **Orders Report**: Track and manage customer orders efficiently.
+- ⚡ **Data Caching with Redis**: Leverage Redis for efficient caching to improve app performance and response times.
 - 🌗 **Light and Dark Theme**: Toggle between light and dark modes for better user experience.
 - ⭐ **Featured Products**: Mark products as featured to display them on the store website's homepage.
 - 🗄️ **Archived Products**: Archive products without deleting them from the system.
@@ -26,7 +27,9 @@ One of the most challenging features was adding **multiple sizes with multiple i
 - **Frontend & Backend**: [Next.js](https://nextjs.org/) (Handles both frontend and backend)
 - **Language**: TypeScript
 - **Database**: MongoDB
+- **Caching**: Redis
 - **State Management**: Zustand
+- **Styling**: Tailwind CSS, Shadcn UI
 - **Authentication**: Next-Auth (Google and GitHub OAuth)
 
 ## Deployment on AWS ☁️
