@@ -9,7 +9,7 @@ This is the e-commerce admin panel that allows administrators to manage their av
 - 📦 **Inventory Report**: Keep track of stock levels with inventory reports.
 - 🖼️ **Billboard Management**: Create, read, update, and delete multiple billboards that are displayed on the store website.
 - 🗂️ **Categories Management**: Manage multiple product categories with ease.
-- 📏 **Sizes Management**: Define and manage multiple available sizes for products.
+- 📏 **Sizes Management**: Define and manage multiple available product sizes.
 - 🎨 **Colors Management**: Add and manage multiple available colors for products.
 - 🛍️ **Products Management**: Add, update, and manage multiple products with advanced options for each.
 - 📑 **Orders Report**: Track and manage customer orders efficiently.
@@ -58,6 +58,5 @@ Here are a few screenshots of the admin panel:
 ![Products Page](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221726/admin/bxe1jq3jvu4plo7kzspd.png)
 ![Orders Report](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221709/admin/jyy1jrpczrsubwmeenpb.png)
 
----
 
-Feel free to explore the admin panel and contribute to the project. We're excited to see what you build with it!
+You can explore the admin panel and contribute to the project. We're excited to see what you build with it!
