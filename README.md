@@ -1,5 +1,12 @@
 # E-commerce Admin Panel
 
+![Products Screenshot](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221727/admin/udjqqe1zbtdbutdrffcu.png)
+![Login Screenshot](https://res.cloudinary.com/dvovo1lfg/image/upload/v1734070901/projects/admin/t7kooq30zcaunhdk7g5v.png)
+![Categories Management](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221727/admin/z8kqbvdcp08kb0a5vmlb.png)
+![Size Screenshot](https://res.cloudinary.com/dvovo1lfg/image/upload/v1734070901/projects/admin/seu0xrxx494wtdmpfju4.png)
+![Colors Page](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221726/admin/bxe1jq3jvu4plo7kzspd.png)
+![Billboard Report](https://res.cloudinary.com/dvovo1lfg/image/upload/v1734071097/projects/admin/ki52m5jlrmxinkeebfzj.png)
+
 This is the e-commerce admin panel that allows administrators to manage their available stock and the store website directly from here. Administrators can create and manage billboards, categories, sizes, colors, products, and even view and manage orders. All changes in the admin panel are directly reflected on the store website. This admin panel is designed to simplify the management of multiple stores, offering powerful reporting and customization features.
 
 ## Features 🎉
@@ -48,15 +55,5 @@ We welcome contributions to improve this project! Please follow the below steps:
 4. Submit a pull request.
 
 We appreciate any contributions that help improve the platform.
-
-## Screenshots 📸
-
-Here are a few screenshots of the admin panel:
-
-![Dashboard Screenshot](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221727/admin/udjqqe1zbtdbutdrffcu.png)
-![Billboard Management](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221727/admin/z8kqbvdcp08kb0a5vmlb.png)
-![Products Page](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221726/admin/bxe1jq3jvu4plo7kzspd.png)
-![Orders Report](https://res.cloudinary.com/dvovo1lfg/image/upload/v1726221709/admin/jyy1jrpczrsubwmeenpb.png)
-
 
 You can explore the admin panel and contribute to the project. We're excited to see what you build with it!
